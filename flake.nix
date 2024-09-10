@@ -79,7 +79,7 @@
           packages = {
             go-mod-vendor = pkgs.writeShellApplication {
               name = "go-mod-vendor";
-              runtimeInputs = with pkgs; [ go ];
+              runtimeInputs = with pkgs; [ go_1_23 ];
               text = ''
                 # If the current directory contains flake.nix, then we are at the repository root
                 if [[ -f flake.nix ]]
@@ -131,12 +131,8 @@
               jq
               marksman
               nil
-              nixfmt
-              nodejs
               openssl
               protobuf
-              yarn
-              yq
             ];
             nativeBuildInputs = [ config.treefmt.build.wrapper ];
             PROTOC = "${pkgs.protobuf}/bin/protoc";
@@ -147,14 +143,13 @@
           treefmt = {
             projectRootFile = "flake.nix";
             programs.nixpkgs-fmt.enable = true;
-            programs.gofumpt.enable = true;
             settings.global.excludes = [ "./vendor*" "*.git*" "./client/docs/statik/statik.go" "./test/mocks/*" "*.pb.go" "*.pb.gw.go" "*.pulsar.go" "./crypto/keys/secp256k1/*" ];
           };
 
           checks = {
             go-test = pkgs.go.stdenv.mkDerivation {
               name = "go-test";
-              buildInputs = [ pkgs.go pkgs.gotestsum pkgs.git pkgs.which ];
+              buildInputs = [ pkgs.go_1_23 pkgs.gotestsum pkgs.git pkgs.which ];
               src = ./.;
               doCheck = true;
               dontInstall = true;
