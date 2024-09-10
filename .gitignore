@@ -12,13 +12,13 @@ private[.-]*
 private
 
 # Build
-vendor
 /build
 dist
 tools-stamp
 buf-stamp
 artifacts
 simapp/simd/simd
+result
 
 # Go
 go.work
