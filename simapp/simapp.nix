@@ -28,6 +28,7 @@
         doCheck = true;
         checkPhase = ''
           export HOME=$(pwd)
+          export CGO_ENABLED = "1"
           export CGO_LDFLAGS="${cgo_ldflags}"
           # export GOFLAGS="-mod=vendor -tags=\"cgo,ledger,test_ledger_mock,norace\""
           export GOFLAGS="-mod=vendor"
@@ -40,11 +41,9 @@
 
           echo "Finished running ${pname} tests."
         '';
-        buildTags = [
-          "netgo"
-          "ledger"
-        ];
+        buildInputs = [ pkgs.rocksdb_8_11 ];
         overrideModAttrs = (_: {
+          CGO_LDFLAGS = cgo_ldflags;
           GOPRIVATE = "github.com/unionlabs/*";
           GOFLAGS = "-mod=vendor";
           GOWORK = "off";

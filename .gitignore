@@ -7,10 +7,6 @@
 *.swn
 *.pyc
 
-# private files
-private[.-]*
-private
-
 # Build
 /build
 dist
