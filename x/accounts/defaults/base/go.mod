@@ -167,6 +167,16 @@ require (
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
 
+require (
+	github.com/bits-and-blooms/bitset v1.7.0 // indirect
+	github.com/consensys/bavard v0.1.13 // indirect
+	github.com/consensys/gnark-crypto v0.12.1 // indirect
+	github.com/holiman/uint256 v1.3.1 // indirect
+	github.com/mmcloughlin/addchain v0.4.0 // indirect
+	github.com/tunabay/go-bitarray v1.3.1 // indirect
+	rsc.io/tmplfunc v0.0.3 // indirect
+)
+
 replace github.com/cosmos/cosmos-sdk => ../../../../.
 
 replace (
@@ -177,4 +187,11 @@ replace (
 	cosmossdk.io/x/accounts => ../../.
 	cosmossdk.io/x/bank => ../../../bank
 	cosmossdk.io/x/staking => ../../../staking
+)
+
+// Union
+replace (
+	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20241018160710-40cbc598984d
+	github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20241018160710-40cbc598984d
+	github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
 )

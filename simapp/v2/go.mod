@@ -240,6 +240,15 @@ require (
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
 
+require (
+	github.com/consensys/bavard v0.1.13 // indirect
+	github.com/consensys/gnark-crypto v0.12.1 // indirect
+	github.com/holiman/uint256 v1.3.1 // indirect
+	github.com/mmcloughlin/addchain v0.4.0 // indirect
+	github.com/tunabay/go-bitarray v1.3.1 // indirect
+	rsc.io/tmplfunc v0.0.3 // indirect
+)
+
 // Here are the short-lived replace from the SimApp
 // Replace here are pending PRs, or version to be tagged
 // replace (
@@ -284,6 +293,10 @@ replace (
 replace (
 	// use cosmos fork of keyring
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
+
+	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20241018160710-40cbc598984d
+	github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20241018160710-40cbc598984d
+	github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
 	// Simapp always use the latest version of the cosmos-sdk
 	github.com/cosmos/cosmos-sdk => ../../.
 	// Fix upstream GHSA-h395-qcrw-5vmq and GHSA-3vp4-m3rf-835h vulnerabilities.
