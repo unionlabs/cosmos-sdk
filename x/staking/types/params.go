@@ -25,6 +25,29 @@ const (
 	// DefaultMaxEntries is the default maximum number of entries
 	// in a UBD (Unbonding Delegation) or RED (Redelegation) pair.
 	DefaultMaxEntries uint32 = 7
+
+	// Default threshold of jailed validators before triggering a forced validator set rotation. Processed as a percentage (50 => 50%)
+	DefaultJailedValidorThreshold uint32 = 50
+
+	// Default number of blocks between normal validator set rotations
+	DefaultEpochLength int64 = 1
+)
+
+// Staking params bounds
+const (
+	// Maximum value for JailedValidorThreshold
+	// JailedValidorThreshold should not be greater than 100 (100%)
+	JailedValidorThresholdMax uint32 = 100
+
+	// Minimum value for JailedValidorThreshold
+	JailedValidorThresholdMin uint32 = 10
+
+	// Maximum value for EpochLength
+	EpochLengthMax int64 = 512
+
+	// Minimum value for EpochLength
+	// EpochLength should not be 0
+	EpochLengthMin int64 = 1
 )
 
 // DefaultMinCommissionRate is set to 0%
@@ -35,15 +58,18 @@ func NewParams(unbondingTime time.Duration,
 	maxValidators, maxEntries uint32,
 	bondDenom string, minCommissionRate math.LegacyDec,
 	keyRotationFee sdk.Coin,
+	jailedValidatorThreshold uint32, epochLength int64,
 ) Params {
 	return Params{
-		UnbondingTime:     unbondingTime,
-		MaxValidators:     maxValidators,
-		MaxEntries:        maxEntries,
-		HistoricalEntries: 0,
-		BondDenom:         bondDenom,
-		MinCommissionRate: minCommissionRate,
-		KeyRotationFee:    keyRotationFee,
+		UnbondingTime:            unbondingTime,
+		MaxValidators:            maxValidators,
+		MaxEntries:               maxEntries,
+		HistoricalEntries:        0,
+		BondDenom:                bondDenom,
+		MinCommissionRate:        minCommissionRate,
+		KeyRotationFee:           keyRotationFee,
+		JailedValidatorThreshold: jailedValidatorThreshold,
+		EpochLength:              epochLength,
 	}
 }
 
@@ -56,6 +82,9 @@ func DefaultParams() Params {
 		sdk.DefaultBondDenom,
 		DefaultMinCommissionRate,
 		sdk.NewInt64Coin(sdk.DefaultBondDenom, 1000000), // fees used to rotate the ConsPubkey or Operator key
+		DefaultKeyRotationFee,
+		DefaultJailedValidorThreshold,
+		DefaultEpochLength,
 	)
 }
 
@@ -106,6 +135,14 @@ func (p Params) Validate() error {
 	}
 
 	if err := validateKeyRotationFee(p.BondDenom, p.KeyRotationFee); err != nil {
+		return err
+	}
+
+	if err := validateJailedValidorThreshold(p.JailedValidatorThreshold); err != nil {
+		return err
+	}
+
+	if err := validateEpochLength(p.EpochLength); err != nil {
 		return err
 	}
 
@@ -217,6 +254,38 @@ func validateKeyRotationFee(bondDenom string, coin sdk.Coin) error {
 
 	if coin.IsLTE(sdk.NewInt64Coin(bondDenom, 0)) {
 		return fmt.Errorf("cons pubkey rotation fee cannot be negative or zero: %s", coin)
+	}
+
+	return nil
+}
+
+func validateJailedValidorThreshold(i interface{}) error {
+	v, ok := i.(uint32)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if v < JailedValidorThresholdMin {
+		return fmt.Errorf("jailed validor threshold cannot be less than %d: %d", JailedValidorThresholdMin, v)
+	}
+	if v > JailedValidorThresholdMax {
+		return fmt.Errorf("jailed validor threshold cannot be greater than %d: %d", JailedValidorThresholdMax, v)
+	}
+
+	return nil
+}
+
+func validateEpochLength(i interface{}) error {
+	v, ok := i.(int64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if v < EpochLengthMin {
+		return fmt.Errorf("epoch length cannot be less than %d: %d", EpochLengthMin, v)
+	}
+	if v > EpochLengthMax {
+		return fmt.Errorf("epoch length cannot be greater than %d: %d", EpochLengthMax, v)
 	}
 
 	return nil

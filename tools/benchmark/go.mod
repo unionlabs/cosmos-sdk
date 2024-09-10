@@ -2,6 +2,23 @@ module cosmossdk.io/tools/benchmark
 
 go 1.23.4
 
+replace (
+	// pseudo version lower than the latest tag
+	cosmossdk.io/api => cosmossdk.io/api v0.7.3-0.20240924065902-eb7653cfecdf // main
+	// pseudo version lower than the latest tag
+	cosmossdk.io/core => cosmossdk.io/core v1.0.0-alpha.4 // main
+	// pseudo version lower than the latest tag
+	cosmossdk.io/store => cosmossdk.io/store v1.0.0-rc.0.0.20240913190136-3bc707a5a214 // main
+	cosmossdk.io/x/bank => ../../../x/bank
+	cosmossdk.io/x/consensus => ../../../x/consensus
+	cosmossdk.io/x/staking => ../../../x/staking
+
+	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20241018160710-40cbc598984d
+	github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20241018160710-40cbc598984d
+	github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
+	github.com/cosmos/cosmos-sdk => ../../../
+)
+
 require (
 	cosmossdk.io/api v0.8.1 // main
 	cosmossdk.io/core v1.0.0
@@ -151,3 +168,12 @@ require (
 )
 
 replace github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.52.0-rc.1
+require (
+	github.com/bits-and-blooms/bitset v1.7.0 // indirect
+	github.com/consensys/bavard v0.1.13 // indirect
+	github.com/consensys/gnark-crypto v0.12.1 // indirect
+	github.com/holiman/uint256 v1.3.1 // indirect
+	github.com/mmcloughlin/addchain v0.4.0 // indirect
+	github.com/tunabay/go-bitarray v1.3.1 // indirect
+	rsc.io/tmplfunc v0.0.3 // indirect
+)

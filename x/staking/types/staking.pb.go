@@ -936,6 +936,10 @@ type Params struct {
 	// key_rotation_fee is fee to be spent when rotating validator's key
 	// (either consensus pubkey or operator key)
 	KeyRotationFee types.Coin `protobuf:"bytes,7,opt,name=key_rotation_fee,json=keyRotationFee,proto3" json:"key_rotation_fee"`
+	// The percentage of validators that can be jailed before forcing a validator set rotation
+	JailedValidatorThreshold uint32 `protobuf:"varint,8,opt,name=jailed_validator_threshold,json=jailedValidatorThreshold,proto3" json:"jailed_validator_threshold,omitempty"`
+	// The number of blocks between regular validator set rotations (between epochs)
+	EpochLength int64 `protobuf:"varint,9,opt,name=epoch_length,json=epochLength,proto3" json:"epoch_length,omitempty"`
 }
 
 func (m *Params) Reset()         { *m = Params{} }
@@ -1012,6 +1016,20 @@ func (m *Params) GetKeyRotationFee() types.Coin {
 		return m.KeyRotationFee
 	}
 	return types.Coin{}
+}
+
+func (m *Params) GetJailedValidatorThreshold() uint32 {
+	if m != nil {
+		return m.JailedValidatorThreshold
+	}
+	return 0
+}
+
+func (m *Params) GetEpochLength() int64 {
+	if m != nil {
+		return m.EpochLength
+	}
+	return 0
 }
 
 // DelegationResponse is equivalent to Delegation except that it contains a
@@ -2490,6 +2508,12 @@ func (this *Params) Equal(that interface{}) bool {
 	if !this.KeyRotationFee.Equal(&that1.KeyRotationFee) {
 		return false
 	}
+	if this.JailedValidatorThreshold != that1.JailedValidatorThreshold {
+		return false
+	}
+	if this.EpochLength != that1.EpochLength {
+		return false
+	}
 	return true
 }
 func (this *RedelegationEntryResponse) Equal(that interface{}) bool {
@@ -3383,6 +3407,16 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.EpochLength != 0 {
+		i = encodeVarintStaking(dAtA, i, uint64(m.EpochLength))
+		i--
+		dAtA[i] = 0x48
+	}
+	if m.JailedValidatorThreshold != 0 {
+		i = encodeVarintStaking(dAtA, i, uint64(m.JailedValidatorThreshold))
+		i--
+		dAtA[i] = 0x40
+	}
 	{
 		size, err := m.KeyRotationFee.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
@@ -4108,6 +4142,12 @@ func (m *Params) Size() (n int) {
 	n += 1 + l + sovStaking(uint64(l))
 	l = m.KeyRotationFee.Size()
 	n += 1 + l + sovStaking(uint64(l))
+	if m.JailedValidatorThreshold != 0 {
+		n += 1 + sovStaking(uint64(m.JailedValidatorThreshold))
+	}
+	if m.EpochLength != 0 {
+		n += 1 + sovStaking(uint64(m.EpochLength))
+	}
 	return n
 }
 
@@ -6916,6 +6956,44 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field JailedValidatorThreshold", wireType)
+			}
+			m.JailedValidatorThreshold = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStaking
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.JailedValidatorThreshold |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EpochLength", wireType)
+			}
+			m.EpochLength = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStaking
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.EpochLength |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipStaking(dAtA[iNdEx:])
