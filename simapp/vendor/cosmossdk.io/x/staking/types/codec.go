@@ -1,0 +1,44 @@
+package types
+
+import (
+	corelegacy "cosmossdk.io/core/legacy"
+	"cosmossdk.io/core/registry"
+	coretransaction "cosmossdk.io/core/transaction"
+
+	"github.com/cosmos/cosmos-sdk/codec/legacy"
+	"github.com/cosmos/cosmos-sdk/types/msgservice"
+)
+
+// RegisterLegacyAminoCodec registers the necessary x/staking interfaces and concrete types
+// on the provided LegacyAmino codec. These types are used for Amino JSON serialization.
+func RegisterLegacyAminoCodec(cdc corelegacy.Amino) {
+	legacy.RegisterAminoMsg(cdc, &MsgCreateValidator{}, "cosmos-sdk/MsgCreateValidator")
+	legacy.RegisterAminoMsg(cdc, &MsgEditValidator{}, "cosmos-sdk/MsgEditValidator")
+	legacy.RegisterAminoMsg(cdc, &MsgDelegate{}, "cosmos-sdk/MsgDelegate")
+	legacy.RegisterAminoMsg(cdc, &MsgUndelegate{}, "cosmos-sdk/MsgUndelegate")
+	legacy.RegisterAminoMsg(cdc, &MsgBeginRedelegate{}, "cosmos-sdk/MsgBeginRedelegate")
+	legacy.RegisterAminoMsg(cdc, &MsgCancelUnbondingDelegation{}, "cosmos-sdk/MsgCancelUnbondingDelegation")
+	legacy.RegisterAminoMsg(cdc, &MsgUpdateParams{}, "cosmos-sdk/x/staking/MsgUpdateParams")
+	legacy.RegisterAminoMsg(cdc, &MsgRotateConsPubKey{}, "cosmos-sdk/MsgRotateConsPubKey")
+
+	cdc.RegisterInterface((*isStakeAuthorization_Validators)(nil), nil)
+	cdc.RegisterConcrete(&StakeAuthorization_AllowList{}, "cosmos-sdk/StakeAuthorization/AllowList")
+	cdc.RegisterConcrete(&StakeAuthorization_DenyList{}, "cosmos-sdk/StakeAuthorization/DenyList")
+	cdc.RegisterConcrete(&StakeAuthorization{}, "cosmos-sdk/StakeAuthorization")
+	cdc.RegisterConcrete(Params{}, "cosmos-sdk/x/staking/Params")
+}
+
+// RegisterInterfaces registers the x/staking interfaces types with the interface registry
+func RegisterInterfaces(registrar registry.InterfaceRegistrar) {
+	registrar.RegisterImplementations((*coretransaction.Msg)(nil),
+		&MsgCreateValidator{},
+		&MsgEditValidator{},
+		&MsgDelegate{},
+		&MsgUndelegate{},
+		&MsgBeginRedelegate{},
+		&MsgCancelUnbondingDelegation{},
+		&MsgUpdateParams{},
+	)
+
+	msgservice.RegisterMsgServiceDesc(registrar, &_Msg_serviceDesc)
+}
