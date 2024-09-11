@@ -185,7 +185,7 @@ func NewClient(
 	}
 
 	c, err := NewClientFromTrustedStore(chainID, trustOptions.Period, primary, witnesses, trustedStore, options...)
-	if err != nil && !errors.Is(err, ErrEmptyTrustedStore) {
+	if err != nil {
 		return nil, err
 	}
 
@@ -203,7 +203,7 @@ func NewClient(
 		}
 	}
 
-	return c, nil
+	return c, err
 }
 
 // NewClientFromTrustedStore initializes existing client from the trusted store.
@@ -256,7 +256,11 @@ func NewClientFromTrustedStore(
 		return nil, err
 	}
 
-	return c, c.restoreTrustedLightBlock()
+	if err := c.restoreTrustedLightBlock(); err != nil {
+		return nil, err
+	}
+
+	return c, nil
 }
 
 // restoreTrustedLightBlock loads the latest trusted light block from the store.
@@ -265,16 +269,16 @@ func (c *Client) restoreTrustedLightBlock() error {
 	if err != nil {
 		return fmt.Errorf("can't get last trusted light block height: %w", err)
 	}
-	if lastHeight == -1 {
-		return ErrEmptyTrustedStore
+
+	if lastHeight > 0 {
+		trustedBlock, err := c.trustedStore.LightBlock(lastHeight)
+		if err != nil {
+			return fmt.Errorf("can't get last trusted light block: %w", err)
+		}
+		c.latestTrustedBlock = trustedBlock
+		c.logger.Info("Restored trusted light block", "height", lastHeight)
 	}
 
-	trustedBlock, err := c.trustedStore.LightBlock(lastHeight)
-	if err != nil {
-		return fmt.Errorf("can't get last trusted light block: %w", err)
-	}
-	c.latestTrustedBlock = trustedBlock
-	c.logger.Info("Restored trusted light block", "height", lastHeight)
 	return nil
 }
 
@@ -380,7 +384,7 @@ func (c *Client) initializeWithTrustOptions(ctx context.Context, options TrustOp
 	}
 
 	// 3) Cross-verify with witnesses to ensure everybody has the same state.
-	if err := c.compareFirstLightBlockWithWitnesses(ctx, l); err != nil {
+	if err := c.compareFirstHeaderWithWitnesses(ctx, l.SignedHeader); err != nil {
 		return err
 	}
 
@@ -895,7 +899,12 @@ func (c *Client) cleanupAfter(height int64) error {
 	}
 
 	c.latestTrustedBlock = nil
-	return c.restoreTrustedLightBlock()
+	err := c.restoreTrustedLightBlock()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Client) updateTrustedLightBlock(l *types.LightBlock) error {
@@ -1117,9 +1126,9 @@ func (c *Client) findNewPrimary(ctx context.Context, height int64, remove bool) 
 	return nil, lastError
 }
 
-// compareFirstLightBlockWithWitnesses compares light block l with all witnesses. If any
+// compareFirstHeaderWithWitnesses compares h with all witnesses. If any
 // witness reports a different header than h, the function returns an error.
-func (c *Client) compareFirstLightBlockWithWitnesses(ctx context.Context, l *types.LightBlock) error {
+func (c *Client) compareFirstHeaderWithWitnesses(ctx context.Context, h *types.SignedHeader) error {
 	compareCtx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
@@ -1132,7 +1141,7 @@ func (c *Client) compareFirstLightBlockWithWitnesses(ctx context.Context, l *typ
 
 	errc := make(chan error, len(c.witnesses))
 	for i, witness := range c.witnesses {
-		go c.compareNewLightBlockWithWitness(compareCtx, errc, l, witness, i)
+		go c.compareNewHeaderWithWitness(compareCtx, errc, h, witness, i)
 	}
 
 	witnessesToRemove := make([]int, 0, len(c.witnesses))
@@ -1144,36 +1153,30 @@ func (c *Client) compareFirstLightBlockWithWitnesses(ctx context.Context, l *typ
 		switch e := err.(type) {
 		case nil:
 			continue
-		case ErrConflictingHeaders:
-			c.logger.Error("Witness reports a conflicting header. "+
-				"Please check if the primary is correct or use a different witness.",
-				"witness", c.witnesses[e.WitnessIndex], "err", err)
+		case errConflictingHeaders:
+			c.logger.Error(fmt.Sprintf(`Witness #%d has a different header. Please check primary is correct
+and remove witness. Otherwise, use the different primary`, e.WitnessIndex), "witness", c.witnesses[e.WitnessIndex])
 			return err
 		case errBadWitness:
 			// If witness sent us an invalid header, then remove it
-			c.logger.Info("Witness sent an invalid light block, removing...",
+			c.logger.Info("witness sent an invalid light block, removing...",
 				"witness", c.witnesses[e.WitnessIndex],
 				"err", err)
 			witnessesToRemove = append(witnessesToRemove, e.WitnessIndex)
-		case ErrProposerPrioritiesDiverge:
-			c.logger.Error("Witness reports conflicting proposer priorities. "+
-				"Please check if the primary is correct or use a different witness.",
-				"witness", c.witnesses[e.WitnessIndex], "err", err)
-			return err
 		default: // benign errors can be ignored with the exception of context errors
 			if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
 				return err
 			}
 
 			// the witness either didn't respond or didn't have the block. We ignore it.
-			c.logger.Info("Error comparing first header with witness. You may want to consider removing the witness",
+			c.logger.Info("error comparing first header with witness. You may want to consider removing the witness",
 				"err", err)
 		}
 	}
 
 	// remove witnesses that have misbehaved
 	if err := c.removeWitnesses(witnessesToRemove); err != nil {
-		c.logger.Error("Failed to remove witnesses", "err", err, "witnessesToRemove", witnessesToRemove)
+		c.logger.Error("failed to remove witnesses", "err", err, "witnessesToRemove", witnessesToRemove)
 	}
 
 	return nil

@@ -3,7 +3,6 @@ package privval
 import (
 	"errors"
 	"net"
-	"sync/atomic"
 	"time"
 
 	privvalproto "github.com/cometbft/cometbft/api/cometbft/privval/v1"
@@ -35,10 +34,9 @@ type SignerListenerEndpoint struct {
 	connectRequestCh      chan struct{}
 	connectionAvailableCh chan net.Conn
 
-	timeoutAccept   time.Duration
-	acceptFailCount atomic.Uint32
-	pingTimer       *time.Ticker
-	pingInterval    time.Duration
+	timeoutAccept time.Duration
+	pingTimer     *time.Ticker
+	pingInterval  time.Duration
 
 	instanceMtx cmtsync.Mutex // Ensures instance public methods access, i.e. SendRequest
 }
@@ -161,11 +159,9 @@ func (sl *SignerListenerEndpoint) acceptNewConnection() (net.Conn, error) {
 	sl.Logger.Info("SignerListener: Listening for new connection")
 	conn, err := sl.listener.Accept()
 	if err != nil {
-		sl.acceptFailCount.Add(1)
 		return nil, err
 	}
 
-	sl.acceptFailCount.Store(0)
 	return conn, nil
 }
 
@@ -185,17 +181,9 @@ func (sl *SignerListenerEndpoint) serviceLoop() {
 	for {
 		select {
 		case <-sl.connectRequestCh:
-			// On start, listen timeouts can queue a duplicate connect request to queue
-			// while the first request connects.  Drop duplicate request.
-			if sl.IsConnected() {
-				sl.Logger.Debug("SignerListener: Connected. Drop Listen Request")
-				continue
-			}
-
-			// Listen for remote signer
 			conn, err := sl.acceptNewConnection()
 			if err != nil {
-				sl.Logger.Error("SignerListener: Error accepting connection", "err", err, "failures", sl.acceptFailCount.Load())
+				sl.Logger.Error("SignerListener: Error accepting connection", "err", err)
 				sl.triggerConnect()
 				continue
 			}

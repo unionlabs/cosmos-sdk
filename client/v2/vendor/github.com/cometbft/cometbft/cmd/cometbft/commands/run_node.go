@@ -1,25 +1,16 @@
 package commands
 
 import (
+	"encoding/hex"
 	"fmt"
 
 	"github.com/spf13/cobra"
 
-	"github.com/cometbft/cometbft/crypto"
-	"github.com/cometbft/cometbft/crypto/ed25519"
-	kt "github.com/cometbft/cometbft/internal/keytypes"
 	cmtos "github.com/cometbft/cometbft/internal/os"
 	nm "github.com/cometbft/cometbft/node"
 )
 
-var (
-	cliParams nm.CliParams
-	keyType   string
-)
-
-func genPrivKeyFromFlag() (crypto.PrivKey, error) {
-	return kt.GenPrivKey(keyType)
-}
+var genesisHash []byte
 
 // AddNodeFlags exposes some common configuration options on the command-line
 // These are exposed for convenience of commands embedding a CometBFT node.
@@ -35,7 +26,7 @@ func AddNodeFlags(cmd *cobra.Command) {
 
 	// node flags
 	cmd.Flags().BytesHexVar(
-		&cliParams.GenesisHash,
+		&genesisHash,
 		"genesis_hash",
 		[]byte{},
 		"optional SHA-256 hash of the genesis file")
@@ -61,7 +52,7 @@ func AddNodeFlags(cmd *cobra.Command) {
 		"p2p.laddr",
 		config.P2P.ListenAddress,
 		"node listen address. (0.0.0.0:0 means any interface, any port)")
-	cmd.Flags().String("p2p.external_address", config.P2P.ExternalAddress, "ip:port address to advertise to peers for them to dial")
+	cmd.Flags().String("p2p.external-address", config.P2P.ExternalAddress, "ip:port address to advertise to peers for them to dial")
 	cmd.Flags().String("p2p.seeds", config.P2P.Seeds, "comma-delimited ID@host:port seed nodes")
 	cmd.Flags().String("p2p.persistent_peers", config.P2P.PersistentPeers, "comma-delimited ID@host:port persistent peers")
 	cmd.Flags().String("p2p.unconditional_peer_ids",
@@ -89,7 +80,6 @@ func AddNodeFlags(cmd *cobra.Command) {
 		"db_dir",
 		config.DBPath,
 		"database directory")
-	cmd.Flags().StringVarP(&keyType, "key-type", "k", ed25519.KeyType, fmt.Sprintf("private key type (one of %s)", kt.SupportedKeyTypesStr()))
 }
 
 // NewRunNodeCmd returns the command that allows the CLI to start a node.
@@ -100,7 +90,11 @@ func NewRunNodeCmd(nodeProvider nm.Provider) *cobra.Command {
 		Aliases: []string{"node", "run"},
 		Short:   "Run the CometBFT node",
 		RunE: func(_ *cobra.Command, _ []string) error {
-			n, err := nodeProvider(config, logger, cliParams, genPrivKeyFromFlag)
+			if len(genesisHash) != 0 {
+				config.Storage.GenesisHash = hex.EncodeToString(genesisHash)
+			}
+
+			n, err := nodeProvider(config, logger)
 			if err != nil {
 				return fmt.Errorf("failed to create node: %w", err)
 			}

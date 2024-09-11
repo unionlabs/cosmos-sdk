@@ -38,26 +38,7 @@ func IndexerFromConfig(cfg *config.Config, dbProvider config.DBProvider, chainID
 		if conn == "" {
 			return nil, nil, false, errors.New("the psql connection settings cannot be empty")
 		}
-		opts := []psql.EventSinkOption{}
-
-		txIndexCfg := cfg.TxIndex
-		if txIndexCfg.TableBlocks != "" {
-			opts = append(opts, psql.WithTableBlocks(txIndexCfg.TableBlocks))
-		}
-
-		if txIndexCfg.TableTxResults != "" {
-			opts = append(opts, psql.WithTableTxResults(txIndexCfg.TableTxResults))
-		}
-
-		if txIndexCfg.TableEvents != "" {
-			opts = append(opts, psql.WithTableEvents(txIndexCfg.TableEvents))
-		}
-
-		if txIndexCfg.TableAttributes != "" {
-			opts = append(opts, psql.WithTableAttributes(txIndexCfg.TableAttributes))
-		}
-
-		es, err := psql.NewEventSink(cfg.TxIndex.PsqlConn, chainID, opts...)
+		es, err := psql.NewEventSink(cfg.TxIndex.PsqlConn, chainID)
 		if err != nil {
 			return nil, nil, false, fmt.Errorf("creating psql indexer: %w", err)
 		}

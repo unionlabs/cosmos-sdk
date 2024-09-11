@@ -47,7 +47,6 @@ type Monitor struct {
 // The default values for sampleRate and windowSize (if <= 0) are 100ms and 1s,
 // respectively.
 func New(sampleRate, windowSize time.Duration) *Monitor {
-	ensureClockRunning()
 	if sampleRate = clockRound(sampleRate); sampleRate <= 0 {
 		sampleRate = 5 * clockRate
 	}
