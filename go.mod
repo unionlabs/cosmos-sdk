@@ -194,6 +194,8 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 	// replace broken goleveldb
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
+
+	github.com/cometbft/cometbft => github.com/unionlabs/cometbft e4e87c9e965a239abfdb3ae5d1f587fb58263ba7
 )
 
 retract (
