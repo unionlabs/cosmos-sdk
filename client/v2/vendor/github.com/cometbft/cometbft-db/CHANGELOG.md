@@ -1,5 +1,45 @@
 # CHANGELOG
 
+## v0.15.0
+
+*September 9, 2024*
+
+This release bumps the Go version to 1.23.
+
+### BREAKING CHANGES
+
+- `[go/runtime]` Bump minimum Go version to v1.23
+  ([\#4039](https://github.com/cometbft/cometbft/issues/4039))
+
+## v0.14.0
+
+*Aug 9, 2024*
+
+This release reinstates boltdb and cleveldb as deprecated backend types.
+Please note that we discourage the use of them, as we plan to discontinue support in a future release.
+
+### DEPENDENCIES
+
+- reinstate BoltDB and ClevelDB as backend DBs
+  ([\#177](https://github.com/cometbft/cometbft-db/pull/177))
+
+## v0.13.0
+
+*Aug 2, 2024*
+
+This release:
+- changes the contract of the Iterator Key() and Value() APIs. Namely, the caller is now responsible for creating a copy of their returned value if they want to modify it.
+- removes support for boltDB and clevelDB, which were marked as deprecated in release v0.12.0.
+
+### BREAKING CHANGES
+
+- removed deprecated boltdb and cleveldb ([\#155](https://github.com/cometbft/cometbft-db/pull/155))
+
+### FEATURES
+
+- Iterator Key and Value APIs now return an object that must be copied before
+  use ([\#168](https://github.com/cometbft/cometbft-db/pull/168))
+
 ## v0.12.0
 
 *Apr 10, 2024*

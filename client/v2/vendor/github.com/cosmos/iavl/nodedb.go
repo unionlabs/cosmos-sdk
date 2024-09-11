@@ -2,6 +2,7 @@ package iavl
 
 import (
 	"bytes"
+	"context"
 	"crypto/sha256"
 	"errors"
 	"fmt"
@@ -11,6 +12,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	corestore "cosmossdk.io/core/store"
 
 	"github.com/cosmos/iavl/cache"
 	dbm "github.com/cosmos/iavl/db"
@@ -65,17 +68,19 @@ var (
 
 	// All legacy root keys are prefixed with the byte 'r'.
 	legacyRootKeyFormat = keyformat.NewKeyFormat('r', int64Size) // r<version>
-
 )
 
 var errInvalidFastStorageVersion = fmt.Errorf("fast storage version must be in the format <storage version>%s<latest fast cache version>", fastStorageVersionDelimiter)
 
 type nodeDB struct {
+	ctx    context.Context
+	cancel context.CancelFunc
 	logger Logger
 
 	mtx                 sync.Mutex       // Read/write lock.
+	done                chan struct{}    // Channel to signal that the pruning process is done.
 	db                  dbm.DB           // Persistent node storage.
-	batch               dbm.Batch        // Batched writing buffer.
+	batch               corestore.Batch  // Batched writing buffer.
 	opts                Options          // Options to customize for pruning/writing
 	versionReaders      map[int64]uint32 // Number of active version readers
 	storageVersion      string           // Storage version
@@ -96,7 +101,10 @@ func newNodeDB(db dbm.DB, cacheSize int, opts Options, lg Logger) *nodeDB {
 		storeVersion = []byte(defaultStorageVersionValue)
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
 	ndb := &nodeDB{
+		ctx:                 ctx,
+		cancel:              cancel,
 		logger:              lg,
 		db:                  db,
 		batch:               NewBatchWithFlusher(db, opts.FlushThreshold),
@@ -113,6 +121,7 @@ func newNodeDB(db dbm.DB, cacheSize int, opts Options, lg Logger) *nodeDB {
 	}
 
 	if opts.AsyncPruning {
+		ndb.done = make(chan struct{})
 		go ndb.startPruning()
 	}
 
@@ -506,7 +515,7 @@ func (ndb *nodeDB) deleteLegacyVersions(legacyLatestVersion int64) error {
 		return err
 	}
 	// Delete all legacy roots
-	if err := ndb.traversePrefix(legacyRootKeyFormat.Key(), func(key, value []byte) error {
+	if err := ndb.traversePrefix(legacyRootKeyFormat.Key(), func(key, _ []byte) error {
 		return ndb.deleteFromPruning(key)
 	}); err != nil {
 		return err
@@ -560,11 +569,9 @@ func (ndb *nodeDB) DeleteVersionsFrom(fromVersion int64) error {
 	}
 
 	// Delete the nodes for new format
-	err = ndb.traverseRange(nodeKeyPrefixFormat.KeyInt64(fromVersion), nodeKeyPrefixFormat.KeyInt64(latest+1), func(k, v []byte) error {
+	if err = ndb.traverseRange(nodeKeyPrefixFormat.KeyInt64(fromVersion), nodeKeyPrefixFormat.KeyInt64(latest+1), func(k, _ []byte) error {
 		return ndb.batch.Delete(k)
-	})
-
-	if err != nil {
+	}); err != nil {
 		return err
 	}
 
@@ -578,26 +585,32 @@ func (ndb *nodeDB) DeleteVersionsFrom(fromVersion int64) error {
 // startPruning starts the pruning process.
 func (ndb *nodeDB) startPruning() {
 	for {
-		ndb.mtx.Lock()
-		toVersion := ndb.pruneVersion
-		ndb.mtx.Unlock()
+		select {
+		case <-ndb.ctx.Done():
+			ndb.done <- struct{}{}
+			return
+		default:
+			ndb.mtx.Lock()
+			toVersion := ndb.pruneVersion
+			ndb.mtx.Unlock()
 
-		if toVersion == 0 {
-			time.Sleep(100 * time.Millisecond)
-			continue
-		}
+			if toVersion == 0 {
+				time.Sleep(100 * time.Millisecond)
+				continue
+			}
 
-		if err := ndb.deleteVersionsTo(toVersion); err != nil {
-			ndb.logger.Error("Error while pruning", "err", err)
-			time.Sleep(1 * time.Second)
-			continue
-		}
+			if err := ndb.deleteVersionsTo(toVersion); err != nil {
+				ndb.logger.Error("Error while pruning", "err", err)
+				time.Sleep(1 * time.Second)
+				continue
+			}
 
-		ndb.mtx.Lock()
-		if ndb.pruneVersion <= toVersion {
-			ndb.pruneVersion = 0
+			ndb.mtx.Lock()
+			if ndb.pruneVersion <= toVersion {
+				ndb.pruneVersion = 0
+			}
+			ndb.mtx.Unlock()
 		}
-		ndb.mtx.Unlock()
 	}
 }
 
@@ -874,7 +887,7 @@ func (ndb *nodeDB) GetRoot(version int64) ([]byte, error) {
 		switch n {
 		case nodeKeyFormat.Length(): // (prefix, version, 1)
 			nk := GetNodeKey(val[1:])
-			val, err = ndb.db.Get(nodeKeyFormat.Key(val[1:]))
+			val, err = ndb.db.Get(val)
 			if err != nil {
 				return nil, err
 			}
@@ -912,6 +925,7 @@ func (ndb *nodeDB) SaveEmptyRoot(version int64) error {
 func (ndb *nodeDB) SaveRoot(version int64, nk *NodeKey) error {
 	ndb.mtx.Lock()
 	defer ndb.mtx.Unlock()
+	ndb.logger.Debug("SaveRoot", "version", version, "nodeKey", nk)
 	return ndb.batch.Set(nodeKeyFormat.Key(GetRootKey(version)), nodeKeyFormat.Key(nk.GetKey()))
 }
 
@@ -961,7 +975,7 @@ func (ndb *nodeDB) traversePrefix(prefix []byte, fn func(k, v []byte) error) err
 }
 
 // Get the iterator for a given prefix.
-func (ndb *nodeDB) getPrefixIterator(prefix []byte) (dbm.Iterator, error) {
+func (ndb *nodeDB) getPrefixIterator(prefix []byte) (corestore.Iterator, error) {
 	var start, end []byte
 	if len(prefix) == 0 {
 		start = nil
@@ -975,7 +989,7 @@ func (ndb *nodeDB) getPrefixIterator(prefix []byte) (dbm.Iterator, error) {
 }
 
 // Get iterator for fast prefix and error, if any
-func (ndb *nodeDB) getFastIterator(start, end []byte, ascending bool) (dbm.Iterator, error) {
+func (ndb *nodeDB) getFastIterator(start, end []byte, ascending bool) (corestore.Iterator, error) {
 	var startFormatted, endFormatted []byte
 
 	if start != nil {
@@ -1095,6 +1109,11 @@ func (ndb *nodeDB) Close() error {
 	ndb.mtx.Lock()
 	defer ndb.mtx.Unlock()
 
+	ndb.cancel()
+	if ndb.opts.AsyncPruning {
+		<-ndb.done // wait for the pruning process to finish
+	}
+
 	if ndb.batch != nil {
 		if err := ndb.batch.Close(); err != nil {
 			return err
@@ -1179,7 +1198,7 @@ func (ndb *nodeDB) orphans() ([][]byte, error) {
 
 func (ndb *nodeDB) size() int {
 	size := 0
-	err := ndb.traverse(func(k, v []byte) error {
+	err := ndb.traverse(func(_, _ []byte) error {
 		size++
 		return nil
 	})
@@ -1285,7 +1304,7 @@ func (ndb *nodeDB) String() (string, error) {
 
 	buf.WriteByte('\n')
 
-	err = ndb.traverseNodes(func(node *Node) error {
+	if err = ndb.traverseNodes(func(node *Node) error {
 		switch {
 		case node == nil:
 			fmt.Fprintf(buf, "%s: <nil>\n", nodeKeyFormat.Prefix())
@@ -1298,9 +1317,7 @@ func (ndb *nodeDB) String() (string, error) {
 		}
 		index++
 		return nil
-	})
-
-	if err != nil {
+	}); err != nil {
 		return "", err
 	}
 

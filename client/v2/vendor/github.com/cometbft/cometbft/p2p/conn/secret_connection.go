@@ -1,6 +1,7 @@
 package conn
 
 import (
+	"bufio"
 	"bytes"
 	"crypto/cipher"
 	crand "crypto/rand"
@@ -14,7 +15,6 @@ import (
 	"time"
 
 	gogotypes "github.com/cosmos/gogoproto/types"
-	pool "github.com/libp2p/go-buffer-pool"
 	"github.com/oasisprotocol/curve25519-voi/primitives/merlin"
 	"golang.org/x/crypto/chacha20poly1305"
 	"golang.org/x/crypto/curve25519"
@@ -43,6 +43,11 @@ const (
 	labelEphemeralUpperPublicKey = "EPHEMERAL_UPPER_PUBLIC_KEY"
 	labelDHSecret                = "DH_SECRET"
 	labelSecretConnectionMac     = "SECRET_CONNECTION_MAC"
+
+	defaultWriteBufferSize = 128 * 1024
+	// try to read the biggest logical packet we can get, in one read.
+	// biggest logical packet is encoding_overhead(64kb).
+	defaultReadBufferSize = 65 * 1024
 )
 
 var (
@@ -66,7 +71,10 @@ type SecretConnection struct {
 	sendAead cipher.AEAD
 
 	remPubKey crypto.PubKey
-	conn      io.ReadWriteCloser
+
+	conn       io.ReadWriteCloser
+	connWriter *bufio.Writer
+	connReader io.Reader
 
 	// net.Conn must be thread safe:
 	// https://golang.org/pkg/net/#Conn.
@@ -75,12 +83,16 @@ type SecretConnection struct {
 	// are independent, so we can use two mtxs.
 	// All .Read are covered by recvMtx,
 	// all .Write are covered by sendMtx.
-	recvMtx    cmtsync.Mutex
-	recvBuffer []byte
-	recvNonce  *[aeadNonceSize]byte
+	recvMtx         cmtsync.Mutex
+	recvBuffer      []byte
+	recvNonce       *[aeadNonceSize]byte
+	recvFrame       []byte
+	recvSealedFrame []byte
 
-	sendMtx   cmtsync.Mutex
-	sendNonce *[aeadNonceSize]byte
+	sendMtx         cmtsync.Mutex
+	sendNonce       *[aeadNonceSize]byte
+	sendFrame       []byte
+	sendSealedFrame []byte
 }
 
 // MakeSecretConnection performs handshake and returns a new authenticated
@@ -141,12 +153,18 @@ func MakeSecretConnection(conn io.ReadWriteCloser, locPrivKey crypto.PrivKey) (*
 	}
 
 	sc := &SecretConnection{
-		conn:       conn,
-		recvBuffer: nil,
-		recvNonce:  new([aeadNonceSize]byte),
-		sendNonce:  new([aeadNonceSize]byte),
-		recvAead:   recvAead,
-		sendAead:   sendAead,
+		conn:            conn,
+		connWriter:      bufio.NewWriterSize(conn, defaultWriteBufferSize),
+		connReader:      bufio.NewReaderSize(conn, defaultReadBufferSize),
+		recvBuffer:      nil,
+		recvNonce:       new([aeadNonceSize]byte),
+		sendNonce:       new([aeadNonceSize]byte),
+		recvAead:        recvAead,
+		sendAead:        sendAead,
+		recvFrame:       make([]byte, totalFrameSize),
+		recvSealedFrame: make([]byte, aeadSizeOverhead+totalFrameSize),
+		sendFrame:       make([]byte, totalFrameSize),
+		sendSealedFrame: make([]byte, aeadSizeOverhead+totalFrameSize),
 	}
 
 	// Sign the challenge bytes for authentication.
@@ -184,15 +202,10 @@ func (sc *SecretConnection) RemotePubKey() crypto.PubKey {
 func (sc *SecretConnection) Write(data []byte) (n int, err error) {
 	sc.sendMtx.Lock()
 	defer sc.sendMtx.Unlock()
+	sealedFrame, frame := sc.sendSealedFrame, sc.sendFrame
 
 	for 0 < len(data) {
 		if err := func() error {
-			sealedFrame := pool.Get(aeadSizeOverhead + totalFrameSize)
-			frame := pool.Get(totalFrameSize)
-			defer func() {
-				pool.Put(sealedFrame)
-				pool.Put(frame)
-			}()
 			var chunk []byte
 			if dataMaxSize < len(data) {
 				chunk = data[:dataMaxSize]
@@ -210,7 +223,7 @@ func (sc *SecretConnection) Write(data []byte) (n int, err error) {
 			incrNonce(sc.sendNonce)
 			// end encryption
 
-			_, err = sc.conn.Write(sealedFrame)
+			_, err = sc.connWriter.Write(sealedFrame)
 			if err != nil {
 				return err
 			}
@@ -220,6 +233,7 @@ func (sc *SecretConnection) Write(data []byte) (n int, err error) {
 			return n, err
 		}
 	}
+	sc.connWriter.Flush()
 	return n, err
 }
 
@@ -236,17 +250,15 @@ func (sc *SecretConnection) Read(data []byte) (n int, err error) {
 	}
 
 	// read off the conn
-	sealedFrame := pool.Get(aeadSizeOverhead + totalFrameSize)
-	defer pool.Put(sealedFrame)
-	_, err = io.ReadFull(sc.conn, sealedFrame)
+	sealedFrame := sc.recvSealedFrame
+	_, err = io.ReadFull(sc.connReader, sealedFrame)
 	if err != nil {
 		return n, err
 	}
 
 	// decrypt the frame.
 	// reads and updates the sc.recvNonce
-	frame := pool.Get(totalFrameSize)
-	defer pool.Put(frame)
+	frame := sc.recvFrame
 	_, err = sc.recvAead.Open(frame[:0], sc.recvNonce[:], sealedFrame, nil)
 	if err != nil {
 		return n, fmt.Errorf("failed to decrypt SecretConnection: %w", err)
