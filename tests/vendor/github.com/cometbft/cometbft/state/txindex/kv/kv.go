@@ -27,10 +27,9 @@ import (
 )
 
 const (
-	tagKeySeparator          = "/"
-	tagKeySeparatorRune      = '/'
-	eventSeqSeparator        = "$es$"
-	eventSeqSeperatorRuneAt0 = '$'
+	tagKeySeparator     = "/"
+	tagKeySeparatorRune = '/'
+	eventSeqSeparator   = "$es$"
 )
 
 var (
@@ -407,38 +406,6 @@ func (txi *TxIndex) indexEvents(result *abci.TxResult, hash []byte, store dbm.Ba
 	return nil
 }
 
-type hashKey struct {
-	hash   string
-	height int64
-}
-
-type hashKeySorter struct {
-	keys []hashKey
-	by   func(t1, t2 *hashKey) bool
-}
-
-func (t *hashKeySorter) Less(i, j int) bool { return t.by(&t.keys[i], &t.keys[j]) }
-func (t *hashKeySorter) Len() int           { return len(t.keys) }
-func (t *hashKeySorter) Swap(i, j int)      { t.keys[i], t.keys[j] = t.keys[j], t.keys[i] }
-
-func byHeightDesc(i, j *hashKey) bool {
-	hi := i.height
-	hj := j.height
-	if hi == hj {
-		return i.hash > j.hash
-	}
-	return hi > hj
-}
-
-func byHeightAsc(i, j *hashKey) bool {
-	hi := i.height
-	hj := j.height
-	if hi == hj {
-		return i.hash < j.hash
-	}
-	return hi < hj
-}
-
 // Search performs a search using the given query.
 //
 // It breaks the query into conditions (like "tx.height > 5"). For each
@@ -548,23 +515,26 @@ func (txi *TxIndex) Search(ctx context.Context, q *query.Query, pagSettings txin
 	numResults := len(filteredHashes)
 
 	// Convert map keys to slice for deterministic ordering
-	hashKeys := make([]hashKey, 0, numResults)
-	for k, v := range filteredHashes {
-		hashKeys = append(hashKeys, hashKey{hash: k, height: v.Height})
-	}
-
-	var by func(i, j *hashKey) bool
-
-	if pagSettings.OrderDesc {
-		by = byHeightDesc
-	} else {
-		by = byHeightAsc
+	hashKeys := make([]string, 0, numResults)
+	for k := range filteredHashes {
+		hashKeys = append(hashKeys, k)
 	}
 
 	// Sort by height
-	sort.Sort(&hashKeySorter{
-		keys: hashKeys,
-		by:   by,
+	sort.Slice(hashKeys, func(i, j int) bool {
+		hi := filteredHashes[hashKeys[i]].Height
+		hj := filteredHashes[hashKeys[j]].Height
+		if hi == hj {
+			// If heights are equal, sort lexicographically
+			if pagSettings.OrderDesc {
+				return hashKeys[i] > hashKeys[j]
+			}
+			return hashKeys[i] < hashKeys[j]
+		}
+		if pagSettings.OrderDesc {
+			return hi > hj
+		}
+		return hi < hj
 	})
 
 	// If paginated, determine which hash keys to return
@@ -595,7 +565,7 @@ func (txi *TxIndex) Search(ctx context.Context, q *query.Query, pagSettings txin
 	resultMap := make(map[string]struct{})
 RESULTS_LOOP:
 	for _, hKey := range hashKeys {
-		h := filteredHashes[hKey.hash].TxBytes
+		h := filteredHashes[hKey].TxBytes
 		res, err := txi.Get(h)
 		if err != nil {
 			return nil, 0, fmt.Errorf("failed to get Tx{%X}: %w", h, err)
@@ -632,17 +602,12 @@ type TxInfo struct {
 }
 
 func (*TxIndex) setTmpHashes(tmpHeights map[string]TxInfo, key, value []byte, height int64) {
-	// value comes from cometbft-db Iterator interface Value() API.
-	// Therefore, we must make a copy before storing references to it.
-	valueCp := make([]byte, len(value))
-	copy(valueCp, value)
-
 	eventSeq := extractEventSeqFromKey(key)
 	txInfo := TxInfo{
-		TxBytes: valueCp,
+		TxBytes: value,
 		Height:  height,
 	}
-	tmpHeights[string(valueCp)+eventSeq] = txInfo
+	tmpHeights[string(value)+eventSeq] = txInfo
 }
 
 // match returns all matching txs by hash that meet a given condition and start
@@ -864,6 +829,9 @@ func (txi *TxIndex) matchRange(
 
 LOOP:
 	for ; it.Valid(); it.Next() {
+		// TODO: We need to make a function for getting it.Key() as a byte slice with no copies.
+		// It currently copies the source data (which can change on a subsequent .Next() call) but that
+		// is not an issue for us.
 		key := it.Key()
 		if !isTagKey(key) {
 			continue
@@ -1027,21 +995,13 @@ func extractValueFromKey(key []byte) string {
 }
 
 func extractEventSeqFromKey(key []byte) string {
-	endPos := bytes.LastIndexByte(key, tagKeySeparatorRune)
+	parts := strings.Split(string(key), tagKeySeparator)
 
-	if endPos == -1 {
-		return "0"
+	lastEl := parts[len(parts)-1]
+
+	if strings.Contains(lastEl, eventSeqSeparator) {
+		return strings.SplitN(lastEl, eventSeqSeparator, 2)[1]
 	}
-
-	for ; endPos < len(key); endPos++ {
-		if key[endPos] == eventSeqSeperatorRuneAt0 {
-			eventSeq := string(key[endPos:])
-			if eventSeq, ok := strings.CutPrefix(eventSeq, eventSeqSeparator); ok {
-				return eventSeq
-			}
-		}
-	}
-
 	return "0"
 }
 

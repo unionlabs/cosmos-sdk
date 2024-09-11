@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"sync"
 	"time"
 
 	"github.com/cosmos/gogoproto/proto"
@@ -95,6 +96,7 @@ type Switch struct {
 	rng *rand.Rand // seed for randomizing dial times and orders
 
 	metrics *Metrics
+	mlc     *metricsLabelCache
 }
 
 // NetAddress returns the address the switch is listening on.
@@ -126,6 +128,7 @@ func NewSwitch(
 		filterTimeout:        defaultFilterTimeout,
 		persistentPeersAddrs: make([]*NetAddress, 0),
 		unconditionalPeerIDs: make(map[ID]struct{}),
+		mlc:                  newMetricsLabelCache(),
 	}
 
 	// Ensure we have a completely undeterministic PRNG.
@@ -170,6 +173,7 @@ func (sw *Switch) AddReactor(name string, reactor Reactor) Reactor {
 		sw.chDescs = append(sw.chDescs, chDesc)
 		sw.reactorsByCh[chID] = reactor
 		sw.msgTypeByChID[chID] = chDesc.MessageType
+		sw.mlc.RegisterChID(chID)
 	}
 	sw.reactors[name] = reactor
 	reactor.SetSwitch(sw)
@@ -263,28 +267,36 @@ func (sw *Switch) OnStop() {
 // Peers
 
 // Broadcast runs a go routine for each attempted send, which will block trying
-// to send for defaultSendTimeoutSeconds.
+// to send for defaultSendTimeoutSeconds. Returns a channel which receives
+// success values for each attempted send (false if times out). Channel will be
+// closed once msg bytes are sent to all peers (or time out).
 //
 // NOTE: Broadcast uses goroutines, so order of broadcast may not be preserved.
-func (sw *Switch) Broadcast(e Envelope) {
-	sw.peers.ForEach(func(p Peer) {
-		go func(peer Peer) {
-			success := peer.Send(e)
-			_ = success
-		}(p)
-	})
-}
+func (sw *Switch) Broadcast(e Envelope) chan bool {
+	sw.Logger.Debug("Broadcast", "channel", e.ChannelID)
 
-// TryBroadcast runs a go routine for each attempted send.
-// If the send queue of the destination channel and peer are full, the message will not be sent. To make sure that messages are indeed sent to all destination, use `Broadcast`.
-//
-// NOTE: TryBroadcast uses goroutines, so order of broadcast may not be preserved.
-func (sw *Switch) TryBroadcast(e Envelope) {
+	var wg sync.WaitGroup
+	successChan := make(chan bool, sw.peers.Size())
+
 	sw.peers.ForEach(func(p Peer) {
+		wg.Add(1) // Incrementing by one is safer.
 		go func(peer Peer) {
-			peer.TrySend(e)
+			defer wg.Done()
+			success := peer.Send(e)
+			// For rare cases where PeerSet changes between a call to `peers.Size()` and `peers.ForEach()`.
+			select {
+			case successChan <- success:
+			default:
+			}
 		}(p)
 	})
+
+	go func() {
+		wg.Wait()
+		close(successChan)
+	}()
+
+	return successChan
 }
 
 // NumPeers returns the count of outbound/inbound and outbound-dialing peers.
@@ -629,6 +641,7 @@ func (sw *Switch) acceptRoutine() {
 			reactorsByCh:  sw.reactorsByCh,
 			msgTypeByChID: sw.msgTypeByChID,
 			metrics:       sw.metrics,
+			mlc:           sw.mlc,
 			isPersistent:  sw.IsPeerPersistent,
 		})
 		if err != nil {
@@ -733,6 +746,7 @@ func (sw *Switch) addOutboundPeerWithConfig(
 		reactorsByCh:  sw.reactorsByCh,
 		msgTypeByChID: sw.msgTypeByChID,
 		metrics:       sw.metrics,
+		mlc:           sw.mlc,
 	})
 	if err != nil {
 		if e, ok := err.(ErrRejected); ok {

@@ -9,8 +9,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
-
 	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/abci/example/kvstore"
 	cfg "github.com/cometbft/cometbft/config"
@@ -41,27 +39,32 @@ func WALGenerateNBlocks(t *testing.T, wr io.Writer, numBlocks int, config *cfg.C
 	// NOTE: we don't do handshake so need to set state.Version.Consensus.App directly.
 	privValidatorKeyFile := config.PrivValidatorKeyFile()
 	privValidatorStateFile := config.PrivValidatorStateFile()
-	privValidator, err := privval.LoadOrGenFilePV(privValidatorKeyFile, privValidatorStateFile, nil)
-	require.NoError(t, err)
+	privValidator := privval.LoadOrGenFilePV(privValidatorKeyFile, privValidatorStateFile)
 	genDoc, err := types.GenesisDocFromFile(config.GenesisFile())
-	require.NoError(t, err)
+	if err != nil {
+		return fmt.Errorf("failed to read genesis file: %w", err)
+	}
 	blockStoreDB := db.NewMemDB()
 	stateDB := blockStoreDB
 	stateStore := sm.NewStore(stateDB, sm.StoreOptions{
 		DiscardABCIResponses: false,
 	})
 	state, err := sm.MakeGenesisState(genDoc)
-	require.NoError(t, err, "failed to make genesis state")
+	if err != nil {
+		return fmt.Errorf("failed to make genesis state: %w", err)
+	}
 	state.Version.Consensus.App = kvstore.AppVersion
-	err = stateStore.Save(state)
-	require.NoError(t, err)
+	if err = stateStore.Save(state); err != nil {
+		t.Error(err)
+	}
 
 	blockStore := store.NewBlockStore(blockStoreDB)
 
 	proxyApp := proxy.NewAppConns(proxy.NewLocalClientCreator(app), proxy.NopMetrics())
 	proxyApp.SetLogger(logger.With("module", "proxy"))
-	err = proxyApp.Start()
-	require.NoError(t, err, "failed to start proxy app connections")
+	if err := proxyApp.Start(); err != nil {
+		return fmt.Errorf("failed to start proxy app connections: %w", err)
+	}
 	t.Cleanup(func() {
 		if err := proxyApp.Stop(); err != nil {
 			t.Error(err)
@@ -70,8 +73,9 @@ func WALGenerateNBlocks(t *testing.T, wr io.Writer, numBlocks int, config *cfg.C
 
 	eventBus := types.NewEventBus()
 	eventBus.SetLogger(logger.With("module", "events"))
-	err = eventBus.Start()
-	require.NoError(t, err, "failed to start event bus")
+	if err := eventBus.Start(); err != nil {
+		return fmt.Errorf("failed to start event bus: %w", err)
+	}
 	t.Cleanup(func() {
 		if err := eventBus.Stop(); err != nil {
 			t.Error(err)
@@ -92,22 +96,26 @@ func WALGenerateNBlocks(t *testing.T, wr io.Writer, numBlocks int, config *cfg.C
 	numBlocksWritten := make(chan struct{})
 	wal := newByteBufferWAL(logger, NewWALEncoder(wr), int64(numBlocks), numBlocksWritten)
 	// see wal.go#103
-	err = wal.Write(EndHeightMessage{0})
-	require.NoError(t, err)
+	if err := wal.Write(EndHeightMessage{0}); err != nil {
+		t.Error(err)
+	}
 
 	consensusState.wal = wal
 
-	err = consensusState.Start()
-	require.NoError(t, err, "failed to start consensus state")
+	if err := consensusState.Start(); err != nil {
+		return fmt.Errorf("failed to start consensus state: %w", err)
+	}
 
 	select {
 	case <-numBlocksWritten:
-		err := consensusState.Stop()
-		require.NoError(t, err)
+		if err := consensusState.Stop(); err != nil {
+			t.Error(err)
+		}
 		return nil
 	case <-time.After(1 * time.Minute):
-		err := consensusState.Stop()
-		require.NoError(t, err)
+		if err := consensusState.Stop(); err != nil {
+			t.Error(err)
+		}
 		return fmt.Errorf("waited too long for CometBFT to produce %d blocks (grep logs for `wal_generator`)", numBlocks)
 	}
 }

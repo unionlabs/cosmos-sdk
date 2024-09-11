@@ -1,14 +1,11 @@
 package commands
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
 
-	"github.com/cometbft/cometbft/crypto/ed25519"
-	kt "github.com/cometbft/cometbft/internal/keytypes"
 	cmtos "github.com/cometbft/cometbft/internal/os"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cometbft/cometbft/privval"
@@ -21,12 +18,6 @@ var ResetAllCmd = &cobra.Command{
 	Aliases: []string{"unsafe_reset_all"},
 	Short:   "(unsafe) Remove all the data and WAL, reset this node's validator to genesis state",
 	RunE:    resetAllCmd,
-}
-
-func init() {
-	ResetAllCmd.Flags().StringVarP(&keyType, "key-type", "k", ed25519.KeyType, fmt.Sprintf("private key type (one of %s)", kt.SupportedKeyTypesStr()))
-	ResetAllCmd.Flags().BoolVar(&keepAddrBook, "keep-addr-book", false, "keep the address book intact")
-	ResetPrivValidatorCmd.Flags().StringVarP(&keyType, "key-type", "k", ed25519.KeyType, fmt.Sprintf("private key type (one of %s)", kt.SupportedKeyTypesStr()))
 }
 
 var keepAddrBook bool
@@ -44,6 +35,10 @@ var ResetStateCmd = &cobra.Command{
 
 		return resetState(config.DBDir(), logger)
 	},
+}
+
+func init() {
+	ResetAllCmd.Flags().BoolVar(&keepAddrBook, "keep-addr-book", false, "keep the address book intact")
 }
 
 // ResetPrivValidatorCmd resets the private validator files.
@@ -79,7 +74,8 @@ func resetPrivValidator(cmd *cobra.Command, _ []string) (err error) {
 		return err
 	}
 
-	return resetFilePV(config.PrivValidatorKeyFile(), config.PrivValidatorStateFile(), logger)
+	resetFilePV(config.PrivValidatorKeyFile(), config.PrivValidatorStateFile(), logger)
+	return nil
 }
 
 // resetAll removes address book files plus all data, and resets the privValdiator data.
@@ -101,7 +97,8 @@ func resetAll(dbDir, addrBookFile, privValKeyFile, privValStateFile string, logg
 	}
 
 	// recreate the dbDir since the privVal state needs to live there
-	return resetFilePV(privValKeyFile, privValStateFile, logger)
+	resetFilePV(privValKeyFile, privValStateFile, logger)
+	return nil
 }
 
 // resetState removes address book files plus all databases.
@@ -158,7 +155,7 @@ func resetState(dbDir string, logger log.Logger) error {
 	return nil
 }
 
-func resetFilePV(privValKeyFile, privValStateFile string, logger log.Logger) error {
+func resetFilePV(privValKeyFile, privValStateFile string, logger log.Logger) {
 	if _, err := os.Stat(privValKeyFile); err == nil {
 		pv := privval.LoadFilePVEmptyState(privValKeyFile, privValStateFile)
 		pv.Reset()
@@ -168,10 +165,7 @@ func resetFilePV(privValKeyFile, privValStateFile string, logger log.Logger) err
 			"stateFile", privValStateFile,
 		)
 	} else {
-		pv, err := privval.GenFilePV(privValKeyFile, privValStateFile, genPrivKeyFromFlag)
-		if err != nil {
-			return err
-		}
+		pv := privval.GenFilePV(privValKeyFile, privValStateFile)
 		pv.Save()
 		logger.Info(
 			"Generated private validator file",
@@ -179,7 +173,6 @@ func resetFilePV(privValKeyFile, privValStateFile string, logger log.Logger) err
 			"stateFile", privValStateFile,
 		)
 	}
-	return nil
 }
 
 func removeAddrBook(addrBookFile string, logger log.Logger) {

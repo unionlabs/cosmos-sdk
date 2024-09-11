@@ -83,7 +83,6 @@ type Reactor struct {
 
 	book              AddrBook
 	config            *ReactorConfig
-	ensurePeersCh     chan struct{} // Wakes up ensurePeersRoutine()
 	ensurePeersPeriod time.Duration // TODO: should go in the config
 	peersRoutineWg    sync.WaitGroup
 
@@ -133,7 +132,6 @@ func NewReactor(b AddrBook, config *ReactorConfig) *Reactor {
 	r := &Reactor{
 		book:                 b,
 		config:               config,
-		ensurePeersCh:        make(chan struct{}),
 		ensurePeersPeriod:    defaultEnsurePeersPeriod,
 		requestsSent:         cmap.NewCMap(),
 		lastReceivedRequests: cmap.NewCMap(),
@@ -369,6 +367,14 @@ func (r *Reactor) ReceiveAddrs(addrs []*p2p.NetAddress, src Peer) error {
 		return err
 	}
 
+	srcIsSeed := false
+	for _, seedAddr := range r.seedAddrs {
+		if seedAddr.Equals(srcAddr) {
+			srcIsSeed = true
+			break
+		}
+	}
+
 	for _, netAddr := range addrs {
 		// NOTE: we check netAddr validity and routability in book#AddAddress.
 		err = r.book.AddAddress(netAddr, srcAddr)
@@ -378,16 +384,21 @@ func (r *Reactor) ReceiveAddrs(addrs []*p2p.NetAddress, src Peer) error {
 			// peer here too?
 			continue
 		}
-	}
 
-	// Try to connect to addresses coming from a seed node without waiting (#2093)
-	for _, seedAddr := range r.seedAddrs {
-		if seedAddr.Equals(srcAddr) {
-			select {
-			case r.ensurePeersCh <- struct{}{}:
-			default:
-			}
-			break
+		// If this address came from a seed node, try to connect to it without
+		// waiting (#2093)
+		if srcIsSeed {
+			go func(addr *p2p.NetAddress) {
+				err := r.dialPeer(addr)
+				if err != nil {
+					switch err.(type) {
+					case errMaxAttemptsToDial, errTooEarlyToDial, p2p.ErrCurrentlyDialingOrExistingAddress:
+						r.Logger.Debug(err.Error(), "addr", addr)
+					default:
+						r.Logger.Debug(err.Error(), "addr", addr)
+					}
+				}
+			}(netAddr)
 		}
 	}
 
@@ -434,8 +445,6 @@ func (r *Reactor) ensurePeersRoutine() {
 	for {
 		select {
 		case <-ticker.C:
-			r.ensurePeers()
-		case <-r.ensurePeersCh:
 			r.ensurePeers()
 		case <-r.book.Quit():
 			return
