@@ -133,6 +133,7 @@
               nil
               openssl
               protobuf
+              rocksdb_8_11
             ];
             nativeBuildInputs = [ config.treefmt.build.wrapper ];
             PROTOC = "${pkgs.protobuf}/bin/protoc";
