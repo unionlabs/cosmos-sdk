@@ -302,7 +302,7 @@ You can retrieve an existing bucket using the `Tx.Bucket()` function:
 db.Update(func(tx *bolt.Tx) error {
 	b := tx.Bucket([]byte("MyBucket"))
 	if b == nil {
-		return fmt.Errorf("bucket does not exist")
+		return errors.New("bucket does not exist")
 	}
 	return nil
 })
@@ -441,10 +441,14 @@ Prev()   Move to the previous key.
 ```
 
 Each of those functions has a return signature of `(key []byte, value []byte)`.
-When you have iterated to the end of the cursor then `Next()` will return a
-`nil` key.  You must seek to a position using `First()`, `Last()`, or `Seek()`
-before calling `Next()` or `Prev()`. If you do not seek to a position then
-these functions will return a `nil` key.
+You must seek to a position using `First()`, `Last()`, or `Seek()` before calling
+`Next()` or `Prev()`. If you do not seek to a position then these functions will
+return a `nil` key.
+
+When you have iterated to the end of the cursor, then `Next()` will return a
+`nil` key and the cursor still points to the last element if present. When you
+have iterated to the beginning of the cursor, then `Prev()` will return a `nil`
+key and the cursor still points to the first element if present.
 
 If you remove key/value pairs during iteration, the cursor may automatically
 move to the next position if present in current node each time removing a key.
@@ -948,6 +952,8 @@ them via pull request.
 
   Please also refer to the discussion in https://github.com/etcd-io/bbolt/issues/562.
 
+- Writing a value with a length of 0 will always result in reading back an empty `[]byte{}` value.
+  Please refer to [issues/726#issuecomment-2061694802](https://github.com/etcd-io/bbolt/issues/726#issuecomment-2061694802).
 
 ## Other Projects Using Bolt
 

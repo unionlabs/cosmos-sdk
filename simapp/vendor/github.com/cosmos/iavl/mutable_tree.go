@@ -7,6 +7,8 @@ import (
 	"sort"
 	"sync"
 
+	corestore "cosmossdk.io/core/store"
+
 	dbm "github.com/cosmos/iavl/db"
 	"github.com/cosmos/iavl/fastnode"
 	ibytes "github.com/cosmos/iavl/internal/bytes"
@@ -68,6 +70,11 @@ func NewMutableTree(db dbm.DB, cacheSize int, skipFastStorageUpgrade bool, lg Lo
 // not empty can be saved.
 func (tree *MutableTree) IsEmpty() bool {
 	return tree.ImmutableTree.Size() == 0
+}
+
+// GetLatestVersion returns the latest version of the tree.
+func (tree *MutableTree) GetLatestVersion() (int64, error) {
+	return tree.ndb.getLatestVersion()
 }
 
 // VersionExists returns whether or not a version exists.
@@ -226,7 +233,7 @@ func (tree *MutableTree) Iterate(fn func(key []byte, value []byte) bool) (stoppe
 
 // Iterator returns an iterator over the mutable tree.
 // CONTRACT: no updates are made to the tree while an iterator is active.
-func (tree *MutableTree) Iterator(start, end []byte, ascending bool) (dbm.Iterator, error) {
+func (tree *MutableTree) Iterator(start, end []byte, ascending bool) (corestore.Iterator, error) {
 	if !tree.skipFastStorageUpgrade {
 		isFastCacheEnabled, err := tree.IsFastCacheEnabled()
 		if err != nil {
@@ -822,7 +829,7 @@ func (tree *MutableTree) addUnsavedAddition(key []byte, node *fastnode.Node) {
 
 func (tree *MutableTree) saveFastNodeAdditions() error {
 	keysToSort := make([]string, 0)
-	tree.unsavedFastNodeAdditions.Range(func(k, v interface{}) bool {
+	tree.unsavedFastNodeAdditions.Range(func(k, _ interface{}) bool {
 		keysToSort = append(keysToSort, k.(string))
 		return true
 	})
@@ -846,7 +853,7 @@ func (tree *MutableTree) addUnsavedRemoval(key []byte) {
 
 func (tree *MutableTree) saveFastNodeRemovals() error {
 	keysToSort := make([]string, 0)
-	tree.unsavedFastNodeRemovals.Range(func(k, v interface{}) bool {
+	tree.unsavedFastNodeRemovals.Range(func(k, _ interface{}) bool {
 		keysToSort = append(keysToSort, k.(string))
 		return true
 	})
@@ -871,6 +878,16 @@ func (tree *MutableTree) SetInitialVersion(version uint64) {
 // It will not block the SaveVersion() call, instead it will be queued and executed deferred.
 func (tree *MutableTree) DeleteVersionsTo(toVersion int64) error {
 	if err := tree.ndb.DeleteVersionsTo(toVersion); err != nil {
+		return err
+	}
+
+	return tree.ndb.Commit()
+}
+
+// DeleteVersionsFrom removes from the given version upwards from the MutableTree.
+// It will not block the SaveVersion() call, instead it will be queued and executed deferred.
+func (tree *MutableTree) DeleteVersionsFrom(fromVersion int64) error {
+	if err := tree.ndb.DeleteVersionsFrom(fromVersion); err != nil {
 		return err
 	}
 

@@ -1,7 +1,8 @@
 package iavl
 
 // Logger defines basic logger that IAVL expects.
-// It is a subset of the cosmossdk.io/log.Logger interface.
+// It is a subset of the cosmossdk.io/core/log.Logger interface.
+// cosmossdk.io/log/log.Logger implements this interface.
 type Logger interface {
 	// Info takes a message and a set of key/value pairs and logs with level INFO.
 	// The key of the tuple must be a string.
