@@ -13,6 +13,9 @@ replace (
 	cosmossdk.io/x/consensus => ../../../x/consensus
 	cosmossdk.io/x/staking => ../../../x/staking
 	github.com/cosmos/cosmos-sdk => ../../../
+
+	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20240911150140-8e5f96400515
+	github.com/Consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
 )
 
 require (

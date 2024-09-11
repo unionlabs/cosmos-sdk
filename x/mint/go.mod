@@ -183,4 +183,7 @@ replace (
 	cosmossdk.io/x/consensus => ../consensus
 	cosmossdk.io/x/epochs => ../epochs
 	cosmossdk.io/x/staking => ../staking
+
+	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20240911150140-8e5f96400515
+	github.com/Consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
 )
