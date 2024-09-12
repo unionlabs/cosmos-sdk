@@ -9,12 +9,12 @@
           src = pkgs.fetchFromGitHub {
             owner = "cosmos";
             repo = "cosmos-proto";
-            rev = "v1.0.0-beta.3";
-            sha256 = "sha256-kFm1ChSmm5pU9oJqKmWq4KfO/hxgxzvcSzr66oTulos=";
+            rev = "0748a2ad4a5c78b1db6c8090db01e255bcc91365";
+            sha256 = "sha256-vMq1+gMLgUdhClbz38+U3MIh9Wzw0DvyAMX6M4ZZBso=";
           };
           doCheck = false;
 
-          vendorHash = "sha256-7kDz0RAon2L/3NTHIxya8nWMyN28G9rAfqUu+lbkea4=";
+          vendorHash = "sha256-Jq0iDd2E4guNRVeUei7eM0wkg6pKm76DY7St5FE//3Q=";
         };
 
         gogoproto = pkgs.buildGoModule {
@@ -23,13 +23,13 @@
           src = pkgs.fetchFromGitHub {
             owner = "cosmos";
             repo = "gogoproto";
-            rev = "v1.4.7";
-            sha256 = "sha256-oaGwDFbz/xgL7hDtvdh/mIcRIGBdp+/xuKeuBE2ZpqY=";
+            rev = "34f37065b54523d08d7b637c78333d444f350e21";
+            sha256 = "sha256-jRC3CImRLzReOcNR483jYPNXhcX4eY9seLJe5DOjp7o=";
           };
           nativeBuildInputs = with pkgs; [ protobuf ];
           doCheck = false;
 
-          vendorHash = "sha256-nfeqVsPMQz7EL+qWxFzRukCE3YqXErhS9urRaJo44Fg=";
+          vendorHash = "sha256-QQNw5NTaAZ7vrgxOoLsuqzwqoWEyYQ+IdFipfmM+PZo=";
         };
 
         grpc-gateway = pkgs.buildGoModule {
@@ -79,6 +79,7 @@
                     -I"${proto.gogoproto}" \
                     -I"${proto.googleapis}" \
                     -I"${proto.cosmosproto}/proto" \
+                    -I"${proto.cometbft}/proto" \
                     --gocosmos_out $out \
                     --gocosmos_opt=plugins=grpc,Mgoogle/protobuf/any.proto=github.com/cosmos/cosmos-sdk/codec/types \
                     --grpc-gateway_out $out \
@@ -99,6 +100,7 @@
                 -I"${proto.gogoproto}" \
                 -I"${proto.googleapis}" \
                 -I"${proto.cosmosproto}/proto" \
+                -I"${proto.cometbft}/proto" \
                 --gocosmos_out $out \
                 --gocosmos_opt=plugins=grpc,Mgoogle/protobuf/any.proto=github.com/cosmos/cosmos-sdk/codec/types \
                 $file
@@ -115,6 +117,7 @@
                 -I"${proto.gogoproto}" \
                 -I"${proto.googleapis}" \
                 -I"${proto.cosmosproto}" \
+                -I"${proto.cometbft}/proto" \
                 --gocosmos_out $out \
                 --gocosmos_opt=plugins=grpc,Mgoogle/protobuf/any.proto=github.com/cosmos/cosmos-sdk/codec/types \
                 $file
@@ -174,6 +177,7 @@
                   -I"${proto.gogoproto}" \
                   -I"${proto.googleapis}" \
                   -I"${proto.cosmosproto}/proto" \
+                  -I"${proto.cometbft}/proto" \
                   -I"/build/cosmos-sdk/proto" \
                   --go-pulsar_out $out/api \
                   --go-pulsar_opt=paths=source_relative \
@@ -228,6 +232,7 @@
                 -I"${proto.gogoproto}" \
                 -I"/build/cosmos-sdk/proto" \
                 -I"${proto.cosmosproto}/proto" \
+                -I"${proto.cometbft}/proto" \
                 --go-pulsar_out $out/testutil/testdata \
                 --go-pulsar_opt=paths=source_relative \
                 --go-grpc_out $out/testutil/testdata \

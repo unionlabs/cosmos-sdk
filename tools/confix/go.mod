@@ -160,6 +160,6 @@ require (
 )
 
 replace (
-	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20240911150140-8e5f96400515
+	github.com/cometbft/cometbft => github.com/unionlabs/cometbft 91a6d9d8455a25147330569a8794e3fe8e2f3fd9
 	github.com/Consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
 )
