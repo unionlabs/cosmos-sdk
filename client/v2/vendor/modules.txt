@@ -261,8 +261,8 @@ github.com/cockroachdb/redact/internal/rfmt/fmtsort
 # github.com/cockroachdb/tokenbucket v0.0.0-20230807174530-cc333fc44b06
 ## explicit; go 1.19
 github.com/cockroachdb/tokenbucket
-# github.com/cometbft/cometbft v1.0.0-rc1.0.20240908111210-ab0be101882f => github.com/unionlabs/cometbft v0.0.0-20240911150140-8e5f96400515
-## explicit; go 1.22.2
+# github.com/cometbft/cometbft v1.0.0-rc1.0.20240908111210-ab0be101882f => github.com/unionlabs/cometbft v0.0.0-20240912164734-91a6d9d8455a
+## explicit; go 1.22.5
 github.com/cometbft/cometbft/abci/client
 github.com/cometbft/cometbft/abci/example/kvstore
 github.com/cometbft/cometbft/abci/server
@@ -277,7 +277,6 @@ github.com/cometbft/cometbft/crypto/ed25519
 github.com/cometbft/cometbft/crypto/encoding
 github.com/cometbft/cometbft/crypto/merkle
 github.com/cometbft/cometbft/crypto/secp256k1
-github.com/cometbft/cometbft/crypto/sr25519
 github.com/cometbft/cometbft/crypto/tmhash
 github.com/cometbft/cometbft/internal/async
 github.com/cometbft/cometbft/internal/autofile
@@ -294,6 +293,7 @@ github.com/cometbft/cometbft/internal/flowrate
 github.com/cometbft/cometbft/internal/indexer
 github.com/cometbft/cometbft/internal/inspect
 github.com/cometbft/cometbft/internal/inspect/rpc
+github.com/cometbft/cometbft/internal/keytypes
 github.com/cometbft/cometbft/internal/net
 github.com/cometbft/cometbft/internal/os
 github.com/cometbft/cometbft/internal/progressbar
@@ -361,7 +361,7 @@ github.com/cometbft/cometbft/version
 # github.com/cometbft/cometbft-db v0.15.0
 ## explicit; go 1.23.1
 github.com/cometbft/cometbft-db
-# github.com/cometbft/cometbft/api v1.0.0-rc.1
+# github.com/cometbft/cometbft/api v1.0.0-rc.1 => github.com/unionlabs/cometbft/api v0.0.0-20240912164734-91a6d9d8455a
 ## explicit; go 1.22
 github.com/cometbft/cometbft/api/cometbft/abci/v1
 github.com/cometbft/cometbft/api/cometbft/blocksync/v1
@@ -612,9 +612,6 @@ github.com/go-logfmt/logfmt
 # github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2
 ## explicit; go 1.12
 github.com/godbus/dbus
-# github.com/gofrs/uuid v4.4.0+incompatible
-## explicit
-github.com/gofrs/uuid
 # github.com/gogo/googleapis v1.4.1
 ## explicit; go 1.12
 github.com/gogo/googleapis/google/api
@@ -662,6 +659,9 @@ github.com/google/go-cmp/cmp/internal/value
 # github.com/google/orderedcode v0.0.1
 ## explicit
 github.com/google/orderedcode
+# github.com/google/uuid v1.6.0
+## explicit
+github.com/google/uuid
 # github.com/gorilla/handlers v1.5.2
 ## explicit; go 1.20
 github.com/gorilla/handlers
@@ -766,9 +766,6 @@ github.com/kr/text
 github.com/lib/pq
 github.com/lib/pq/oid
 github.com/lib/pq/scram
-# github.com/libp2p/go-buffer-pool v0.1.0
-## explicit; go 1.17
-github.com/libp2p/go-buffer-pool
 # github.com/linxGnu/grocksdb v1.9.3
 ## explicit; go 1.17
 github.com/linxGnu/grocksdb
@@ -836,11 +833,9 @@ github.com/oasisprotocol/curve25519-voi/internal/scalar128
 github.com/oasisprotocol/curve25519-voi/internal/strobe
 github.com/oasisprotocol/curve25519-voi/internal/subtle
 github.com/oasisprotocol/curve25519-voi/internal/toolchain
-github.com/oasisprotocol/curve25519-voi/internal/zeroreader
 github.com/oasisprotocol/curve25519-voi/primitives/ed25519
 github.com/oasisprotocol/curve25519-voi/primitives/ed25519/extra/cache
 github.com/oasisprotocol/curve25519-voi/primitives/merlin
-github.com/oasisprotocol/curve25519-voi/primitives/sr25519
 # github.com/oklog/run v1.1.0
 ## explicit; go 1.13
 github.com/oklog/run
@@ -1250,5 +1245,6 @@ sigs.k8s.io/yaml/goyaml.v2
 # cosmossdk.io/x/bank => ./../../x/bank
 # cosmossdk.io/x/gov => ./../../x/gov
 # cosmossdk.io/x/staking => ./../../x/staking
-# github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20240911150140-8e5f96400515
+# github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20240912164734-91a6d9d8455a
+# github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20240912164734-91a6d9d8455a
 # github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578

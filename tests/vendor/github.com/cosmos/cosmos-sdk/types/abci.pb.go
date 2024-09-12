@@ -8,9 +8,9 @@ import (
 	v1 "github.com/cometbft/cometbft/api/cometbft/abci/v1"
 	v11 "github.com/cometbft/cometbft/api/cometbft/types/v1"
 	_ "github.com/cosmos/cosmos-proto"
+	types "github.com/cosmos/cosmos-sdk/codec/types"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
-	any "github.com/cosmos/gogoproto/types/any"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -54,7 +54,7 @@ type TxResponse struct {
 	// Amount of gas consumed by transaction.
 	GasUsed int64 `protobuf:"varint,10,opt,name=gas_used,json=gasUsed,proto3" json:"gas_used,omitempty"`
 	// The request transaction bytes.
-	Tx *any.Any `protobuf:"bytes,11,opt,name=tx,proto3" json:"tx,omitempty"`
+	Tx *types.Any `protobuf:"bytes,11,opt,name=tx,proto3" json:"tx,omitempty"`
 	// Time of the previous block. For heights > 1, it's the weighted median of
 	// the timestamps of the valid votes in the block.LastCommit. For height == 1,
 	// it's genesis time.
@@ -333,7 +333,7 @@ type Result struct {
 	// or handler execution.
 	Events []v1.Event `protobuf:"bytes,3,rep,name=events,proto3" json:"events"`
 	// msg_responses contains the Msg handler responses type packed in Anys.
-	MsgResponses []*any.Any `protobuf:"bytes,4,rep,name=msg_responses,json=msgResponses,proto3" json:"msg_responses,omitempty"`
+	MsgResponses []*types.Any `protobuf:"bytes,4,rep,name=msg_responses,json=msgResponses,proto3" json:"msg_responses,omitempty"`
 }
 
 func (m *Result) Reset()      { *m = Result{} }
@@ -475,7 +475,7 @@ type TxMsgData struct {
 	// data field is deprecated and not populated.
 	Data []*MsgData `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"` // Deprecated: Do not use.
 	// msg_responses contains the Msg handler responses packed into Anys.
-	MsgResponses []*any.Any `protobuf:"bytes,2,rep,name=msg_responses,json=msgResponses,proto3" json:"msg_responses,omitempty"`
+	MsgResponses []*types.Any `protobuf:"bytes,2,rep,name=msg_responses,json=msgResponses,proto3" json:"msg_responses,omitempty"`
 }
 
 func (m *TxMsgData) Reset()      { *m = TxMsgData{} }
@@ -518,7 +518,7 @@ func (m *TxMsgData) GetData() []*MsgData {
 	return nil
 }
 
-func (m *TxMsgData) GetMsgResponses() []*any.Any {
+func (m *TxMsgData) GetMsgResponses() []*types.Any {
 	if m != nil {
 		return m.MsgResponses
 	}
@@ -1748,7 +1748,7 @@ func (this *TxMsgData) String() string {
 	repeatedStringForData += "}"
 	repeatedStringForMsgResponses := "[]*Any{"
 	for _, f := range this.MsgResponses {
-		repeatedStringForMsgResponses += strings.Replace(fmt.Sprintf("%v", f), "Any", "any.Any", 1) + ","
+		repeatedStringForMsgResponses += strings.Replace(fmt.Sprintf("%v", f), "Any", "types.Any", 1) + ","
 	}
 	repeatedStringForMsgResponses += "}"
 	s := strings.Join([]string{`&TxMsgData{`,
@@ -2135,7 +2135,7 @@ func (m *TxResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Tx == nil {
-				m.Tx = &any.Any{}
+				m.Tx = &types.Any{}
 			}
 			if err := m.Tx.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -2839,7 +2839,7 @@ func (m *Result) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.MsgResponses = append(m.MsgResponses, &any.Any{})
+			m.MsgResponses = append(m.MsgResponses, &types.Any{})
 			if err := m.MsgResponses[len(m.MsgResponses)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -3192,7 +3192,7 @@ func (m *TxMsgData) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.MsgResponses = append(m.MsgResponses, &any.Any{})
+			m.MsgResponses = append(m.MsgResponses, &types.Any{})
 			if err := m.MsgResponses[len(m.MsgResponses)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}

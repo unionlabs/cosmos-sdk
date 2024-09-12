@@ -184,6 +184,16 @@ func (cfg *Config) CheckDeprecated() []string {
 	return warnings
 }
 
+// PossibleMisconfigurations returns a list of possible conflicting entries that
+// may lead to unexpected behavior.
+func (cfg *Config) PossibleMisconfigurations() []string {
+	res := []string{}
+	for _, elem := range cfg.StateSync.PossibleMisconfigurations() {
+		res = append(res, "[statesync] section: "+elem)
+	}
+	return res
+}
+
 // -----------------------------------------------------------------------------
 // BaseConfig
 
@@ -902,7 +912,7 @@ type MempoolConfig struct {
 	// transactions and a 5MB maximum mempool byte size, the mempool will
 	// only accept five transactions.
 	MaxTxsBytes int64 `mapstructure:"max_txs_bytes"`
-	// Size of the cache (used to filter transactions we saw earlier) in transactions
+	// Size of the cache (used to filter transactions we saw earlier) in transactions.
 	CacheSize int `mapstructure:"cache_size"`
 	// Do not remove invalid transactions from the cache (default: false)
 	// Set to true if it's not possible for any invalid transaction to become
@@ -987,6 +997,20 @@ func (cfg *MempoolConfig) ValidateBasic() error {
 	if cfg.ExperimentalMaxGossipConnectionsToNonPersistentPeers < 0 {
 		return cmterrors.ErrNegativeField{Field: "experimental_max_gossip_connections_to_non_persistent_peers"}
 	}
+
+	// Flood mempool with zero capacity is not allowed.
+	if cfg.Type != MempoolTypeNop {
+		if cfg.Size == 0 {
+			return cmterrors.ErrNegativeOrZeroField{Field: "size"}
+		}
+		if cfg.MaxTxsBytes == 0 {
+			return cmterrors.ErrNegativeOrZeroField{Field: "max_txs_bytes"}
+		}
+		if cfg.MaxTxBytes == 0 {
+			return cmterrors.ErrNegativeOrZeroField{Field: "max_tx_bytes"}
+		}
+	}
+
 	return nil
 }
 
@@ -1078,6 +1102,15 @@ func (cfg *StateSyncConfig) ValidateBasic() error {
 	}
 
 	return nil
+}
+
+// PossibleMisconfigurations returns a list of possible conflicting entries that
+// may lead to unexpected behavior.
+func (cfg *StateSyncConfig) PossibleMisconfigurations() []string {
+	if !cfg.Enable && len(cfg.RPCServers) != 0 {
+		return []string{"rpc_servers specified but enable = false"}
+	}
+	return []string{}
 }
 
 // -----------------------------------------------------------------------------
@@ -1305,13 +1338,6 @@ type StorageConfig struct {
 	// large multiple of your retain height as it might occur bigger overheads.
 	// 1000 by default.
 	CompactionInterval int64 `mapstructure:"compaction_interval"`
-	// Hex representation of the hash of the genesis file.
-	// This is an optional parameter set when an operator provides
-	// a hash via the command line.
-	// It is used to verify the hash of the actual genesis file.
-	// Note that if the provided has does not match the hash of the genesis file
-	// the node will report an error and not boot.
-	GenesisHash string `mapstructure:"genesis_hash"`
 
 	// The representation of keys in the database.
 	// The current representation of keys in Comet's stores is considered to be v1
@@ -1329,7 +1355,6 @@ func DefaultStorageConfig() *StorageConfig {
 		Pruning:               DefaultPruningConfig(),
 		Compact:               false,
 		CompactionInterval:    1000,
-		GenesisHash:           "",
 		ExperimentalKeyLayout: "v1",
 	}
 }
@@ -1340,7 +1365,6 @@ func TestStorageConfig() *StorageConfig {
 	return &StorageConfig{
 		DiscardABCIResponses: false,
 		Pruning:              TestPruningConfig(),
-		GenesisHash:          "",
 	}
 }
 
@@ -1380,6 +1404,15 @@ type TxIndexConfig struct {
 	// The PostgreSQL connection configuration, the connection format:
 	// postgresql://<user>:<password>@<host>:<port>/<db>?<opts>
 	PsqlConn string `mapstructure:"psql-conn"`
+
+	// The PostgreSQL table that stores indexed blocks.
+	TableBlocks string `mapstructure:"table_blocks"`
+	// The PostgreSQL table that stores indexed transaction results.
+	TableTxResults string `mapstructure:"table_tx_results"`
+	// The PostgreSQL table that stores indexed events.
+	TableEvents string `mapstructure:"table_events"`
+	// The PostgreSQL table that stores indexed attributes.
+	TableAttributes string `mapstructure:"table_attributes"`
 }
 
 // DefaultTxIndexConfig returns a default configuration for the transaction indexer.
