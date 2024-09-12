@@ -74,7 +74,7 @@ require (
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bgentry/speakeasy v0.2.0 // indirect
 	github.com/bits-and-blooms/bitset v1.10.0 // indirect
-	github.com/btcsuite/btcd/btcec/v2 v2.3.4 // indirect
+	github.com/btcsuite/btcd/btcec/v2 v2.3.3 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
@@ -289,6 +289,7 @@ replace (
 	// replace broken goleveldb
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 
-	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20240911150140-8e5f96400515
+	github.com/cometbft/cometbft => github.com/unionlabs/cometbft 91a6d9d8455a25147330569a8794e3fe8e2f3fd9
+	github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api 91a6d9d8455a25147330569a8794e3fe8e2f3fd9
 	github.com/Consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
 )

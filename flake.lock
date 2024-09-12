@@ -1,19 +1,36 @@
 {
   "nodes": {
+    "cometbft": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1726066900,
+        "narHash": "sha256-j0lO06/spybG7TYCFTxXSKkQgNiU8Yj7oRlNsW2IawM=",
+        "owner": "unionlabs",
+        "repo": "cometbft",
+        "rev": "8e5f9640051521f4adc92137d40568f9e7f0d3e4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "unionlabs",
+        "repo": "cometbft",
+        "rev": "8e5f9640051521f4adc92137d40568f9e7f0d3e4",
+        "type": "github"
+      }
+    },
     "cosmosproto": {
       "flake": false,
       "locked": {
-        "lastModified": 1699091724,
-        "narHash": "sha256-yGO5sldNAVtnsuGuDAbh3/JKovvhH5emfu6rWlYGCms=",
+        "lastModified": 1713435259,
+        "narHash": "sha256-vMq1+gMLgUdhClbz38+U3MIh9Wzw0DvyAMX6M4ZZBso=",
         "owner": "cosmos",
         "repo": "cosmos-proto",
-        "rev": "3f5f5eb19538f5ff023e88461fb7ca890807f5e1",
+        "rev": "0748a2ad4a5c78b1db6c8090db01e255bcc91365",
         "type": "github"
       },
       "original": {
         "owner": "cosmos",
         "repo": "cosmos-proto",
-        "rev": "3f5f5eb19538f5ff023e88461fb7ca890807f5e1",
+        "rev": "0748a2ad4a5c78b1db6c8090db01e255bcc91365",
         "type": "github"
       }
     },
@@ -57,17 +74,17 @@
     "googleapis": {
       "flake": false,
       "locked": {
-        "lastModified": 1681506972,
-        "narHash": "sha256-TME4wkdmqrb0Shuc5uFqSGSoDaMhM9YJv9kvTam7c9I=",
+        "lastModified": 1711408373,
+        "narHash": "sha256-+w2IC8WbHub7S+Q/8GwnlcBcVia0HxdIWuvyfl5XxTs=",
         "owner": "googleapis",
         "repo": "googleapis",
-        "rev": "6774ccbbc3f182f6ae3a32dca29e1da489ad8a8f",
+        "rev": "8984ddb508dea0e673b724c58338e810b1d8aee3",
         "type": "github"
       },
       "original": {
         "owner": "googleapis",
         "repo": "googleapis",
-        "rev": "6774ccbbc3f182f6ae3a32dca29e1da489ad8a8f",
+        "rev": "8984ddb508dea0e673b724c58338e810b1d8aee3",
         "type": "github"
       }
     },
@@ -89,6 +106,7 @@
     },
     "root": {
       "inputs": {
+        "cometbft": "cometbft",
         "cosmosproto": "cosmosproto",
         "flake-parts": "flake-parts",
         "gogoproto": "gogoproto",

@@ -16,7 +16,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cosmosproto = {
-      url = "github:cosmos/cosmos-proto?rev=3f5f5eb19538f5ff023e88461fb7ca890807f5e1";
+      url = "github:cosmos/cosmos-proto?rev=0748a2ad4a5c78b1db6c8090db01e255bcc91365";
       flake = false;
     };
     gogoproto = {
@@ -24,12 +24,16 @@
       flake = false;
     };
     googleapis = {
-      url = "github:googleapis/googleapis?rev=6774ccbbc3f182f6ae3a32dca29e1da489ad8a8f";
+      url = "github:googleapis/googleapis?rev=8984ddb508dea0e673b724c58338e810b1d8aee3";
+      flake = false;
+    };
+    cometbft = {
+      url = "github:unionlabs/cometbft?rev=8e5f9640051521f4adc92137d40568f9e7f0d3e4";
       flake = false;
     };
   };
 
-  outputs = inputs@{ nixpkgs, flake-parts, treefmt-nix, cosmosproto, gogoproto, googleapis, ... }:
+  outputs = inputs@{ nixpkgs, flake-parts, treefmt-nix, cosmosproto, gogoproto, googleapis, cometbft, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems =
         [ "x86_64-linux" "aarch64-linux" ];
@@ -72,6 +76,10 @@
                 googleapis = mkUnpack {
                   name = "googleapis";
                   package = googleapis;
+                };
+                cometbft = mkUnpack {
+                  name = "cometbft";
+                  package = cometbft;
                 };
               };
             };
