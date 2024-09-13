@@ -729,6 +729,7 @@ github.com/cosmos/cosmos-sdk/crypto/hd
 github.com/cosmos/cosmos-sdk/crypto/keyring
 github.com/cosmos/cosmos-sdk/crypto/keys/bcrypt
 github.com/cosmos/cosmos-sdk/crypto/keys/bls12_381
+github.com/cosmos/cosmos-sdk/crypto/keys/bn254
 github.com/cosmos/cosmos-sdk/crypto/keys/ed25519
 github.com/cosmos/cosmos-sdk/crypto/keys/internal/ecdsa
 github.com/cosmos/cosmos-sdk/crypto/keys/multisig
@@ -1770,6 +1771,7 @@ sigs.k8s.io/yaml/goyaml.v2
 # github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20240912164734-91a6d9d8455a
 # github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20240912164734-91a6d9d8455a
 # github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
+# github.com/cosmos-sdk/cosmos => ../.
 # github.com/cosmos/cosmos-sdk => ../.
 # github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.9.1
 # github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7

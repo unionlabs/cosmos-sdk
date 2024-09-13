@@ -435,6 +435,7 @@ github.com/cosmos/cosmos-sdk/crypto/hd
 github.com/cosmos/cosmos-sdk/crypto/keyring
 github.com/cosmos/cosmos-sdk/crypto/keys/bcrypt
 github.com/cosmos/cosmos-sdk/crypto/keys/bls12_381
+github.com/cosmos/cosmos-sdk/crypto/keys/bn254
 github.com/cosmos/cosmos-sdk/crypto/keys/ed25519
 github.com/cosmos/cosmos-sdk/crypto/keys/internal/ecdsa
 github.com/cosmos/cosmos-sdk/crypto/keys/multisig

@@ -11,11 +11,13 @@ import (
 	cfg "github.com/cometbft/cometbft/config"
 	cmtcrypto "github.com/cometbft/cometbft/crypto"
 	cmtbls12381 "github.com/cometbft/cometbft/crypto/bls12381"
+	cmtbn254 "github.com/cometbft/cometbft/crypto/bn254"
 	tmed25519 "github.com/cometbft/cometbft/crypto/ed25519"
 	"github.com/cometbft/cometbft/p2p"
 	"github.com/cometbft/cometbft/privval"
 	cmttypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/go-bip39"
+	"github.com/syndtr/goleveldb/leveldb/memdb"
 
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -95,6 +97,9 @@ func InitializeNodeValidatorFilesFromMnemonic(config *cfg.Config, mnemonic, keyT
 				return "", nil, err
 			}
 			filePV = loadOrGenFilePV(privKey, pvKeyFile, pvStateFile)
+		case "bn254":
+			privKey = cmtbn254.GenPrivKey()
+			filePV = loadOrGenFilePV(privKey, pvKeyFile, pvStateFile)
 		default:
 			filePV = loadOrGenFilePV(tmed25519.GenPrivKey(), pvKeyFile, pvStateFile)
 		}
@@ -105,6 +110,8 @@ func InitializeNodeValidatorFilesFromMnemonic(config *cfg.Config, mnemonic, keyT
 		case "bls12_381":
 			// TODO: need to add support for getting from mnemonic in Comet.
 			return "", nil, errors.New("BLS key type does not support mnemonic")
+		case "bn254":
+			privKey = cmtbn254.GenPrivKeyFromSeed([]byte(mnemonic))
 		default:
 			privKey = tmed25519.GenPrivKeyFromSecret([]byte(mnemonic))
 		}

@@ -116,6 +116,7 @@ func InitCmd(mm genesisMM) *cobra.Command {
 			}
 
 			consensusKey, err := cmd.Flags().GetString(FlagConsensusKeyAlgo)
+			print(consensusKey)
 			if err != nil {
 				return errorsmod.Wrap(err, "Failed to get consensus key algo")
 			}
