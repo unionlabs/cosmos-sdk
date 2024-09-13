@@ -962,7 +962,7 @@ github.com/tendermint/go-amino
 # github.com/tidwall/btree v1.7.0
 ## explicit; go 1.19
 github.com/tidwall/btree
-# github.com/tunabay/go-bitarray v1.3.1
+# github.com/tunabay/go-bitarray v1.3.1 => github.com/poisonphang/go-bitarray v0.0.0-20240912214703-d6127bb4d1bd
 ## explicit; go 1.17
 github.com/tunabay/go-bitarray
 # github.com/zondax/hid v0.9.2
@@ -1248,3 +1248,4 @@ sigs.k8s.io/yaml/goyaml.v2
 # github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20240912164734-91a6d9d8455a
 # github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20240912164734-91a6d9d8455a
 # github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
+# github.com/tunabay/go-bitarray => github.com/poisonphang/go-bitarray v0.0.0-20240912214703-d6127bb4d1bd
