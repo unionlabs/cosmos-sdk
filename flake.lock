@@ -104,6 +104,23 @@
         "type": "github"
       }
     },
+    "protoc-gen-go-cosmos-orm": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1683840916,
+        "narHash": "sha256-jVtXUc7smXAG9ErGLFYYNjK3wVIXlrggWRj3Piqz/Ak=",
+        "owner": "cosmos",
+        "repo": "cosmos-sdk",
+        "rev": "cd45ab2abdd9817a0ebb583f5334514e3f900cfb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cosmos",
+        "repo": "cosmos-sdk",
+        "rev": "cd45ab2abdd9817a0ebb583f5334514e3f900cfb",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "cometbft": "cometbft",
@@ -112,6 +129,7 @@
         "gogoproto": "gogoproto",
         "googleapis": "googleapis",
         "nixpkgs": "nixpkgs",
+        "protoc-gen-go-cosmos-orm": "protoc-gen-go-cosmos-orm",
         "swagger-combine-src": "swagger-combine-src",
         "treefmt-nix": "treefmt-nix"
       }
