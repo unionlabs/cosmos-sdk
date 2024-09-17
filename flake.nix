@@ -15,6 +15,10 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    protoc-gen-go-cosmos-orm = {
+      url = "github:cosmos/cosmos-sdk?rev=cd45ab2abdd9817a0ebb583f5334514e3f900cfb";
+      flake = false;
+    };
     cosmosproto = {
       url = "github:cosmos/cosmos-proto?rev=0748a2ad4a5c78b1db6c8090db01e255bcc91365";
       flake = false;
@@ -33,7 +37,7 @@
     };
   };
 
-  outputs = inputs@{ nixpkgs, flake-parts, treefmt-nix, cosmosproto, gogoproto, googleapis, cometbft, ... }:
+  outputs = inputs@{ nixpkgs, flake-parts, treefmt-nix, protoc-gen-go-cosmos-orm, cosmosproto, gogoproto, googleapis, cometbft, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems =
         [ "x86_64-linux" "aarch64-linux" ];
@@ -61,6 +65,10 @@
                 if (builtins.hasAttr "rev" self') then self'.rev else "dev";
 
               proto = {
+                protoc-gen-go-cosmos-orm = mkUnpack {
+                  name = "protoc-gen-go-cosmos-orm";
+                  package = protoc-gen-go-cosmos-orm;
+                };
                 cosmossdk = builtins.path {
                   name = "cosmos-sdk";
                   path = ./.;

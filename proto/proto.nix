@@ -45,6 +45,14 @@
           vendorHash = "sha256-jVOb2uHjPley+K41pV+iMPNx67jtb75Rb/ENhw+ZMoM=";
         };
 
+        protoc-gen-go-cosmos-orm = pkgs.buildGoModule {
+          pname = "protoc-gen-go-cosmos-orm";
+          version = "1.0.0-beta.3";
+          src = "${proto.protoc-gen-go-cosmos-orm}/orm";
+          vendorHash = "sha256-7Ww/drdom370PIXC60g/O9BnxpY3u0y7JsrLGJy7CqQ=";
+          doCheck = false;
+        };
+
         proto-generate = pkgs.stdenv.mkDerivation {
           name = "generate-proto";
           src = proto.cosmossdk;
@@ -264,6 +272,34 @@
 
             echo "Done!"
 
+          '';
+        };
+        proto-gen-buf = pkgs.writeShellApplication {
+          name = "proto-gen-buf";
+          runtimeInputs = (with pkgs; [ 
+            go_1_23 
+            buf 
+            clang-tools 
+            protobuf
+            protoc-gen-go
+            protoc-gen-go-grpc
+          ] ++ [ 
+            cosmos-proto 
+            grpc-gateway 
+            gogoproto 
+            protoc-gen-go-cosmos-orm
+          ]);
+          text = ''
+            # If the current directory contains flake.nix, then we are at the repository root
+            if [[ -f flake.nix ]]
+            then
+              echo "We are at the repository root. Starting generation..."
+            else
+              echo "We are NOT at the repository root. Please cd to the repository root and try again."
+              exit 1
+            fi
+
+            ./scripts/protocgen.sh
           '';
         };
       };
