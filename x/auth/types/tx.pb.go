@@ -587,6 +587,7 @@ func _Msg_MigrateAccount_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 var Msg_serviceDesc = _Msg_serviceDesc
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "cosmos.auth.v1beta1.Msg",
 	HandlerType: (*MsgServer)(nil),
