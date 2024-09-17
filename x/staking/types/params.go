@@ -24,6 +24,12 @@ const (
 
 	// Default maximum entries in a UBD/RED pair
 	DefaultMaxEntries uint32 = 7
+
+	// Default threshold of jailed validators before triggering a forced validator set rotation. Processed as a percentage (50 => 50%)
+	DefaultJailedValidorThreshold uint32 = 50
+
+	// Default number of blocks between normal validator set rotations
+	DefaultEpochLength int64 = 1
 )
 
 var (
