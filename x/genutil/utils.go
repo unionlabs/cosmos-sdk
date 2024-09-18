@@ -100,7 +100,8 @@ func InitializeNodeValidatorFilesFromMnemonic(config *cfg.Config, mnemonic, keyT
 			privKey = cmtbn254.GenPrivKey()
 			filePV = loadOrGenFilePV(privKey, pvKeyFile, pvStateFile)
 		default:
-			filePV = loadOrGenFilePV(tmed25519.GenPrivKey(), pvKeyFile, pvStateFile)
+			privKey = cmtbn254.GenPrivKey()
+			filePV = loadOrGenFilePV(privKey, pvKeyFile, pvStateFile)
 		}
 	} else {
 		switch keyType {
@@ -112,7 +113,7 @@ func InitializeNodeValidatorFilesFromMnemonic(config *cfg.Config, mnemonic, keyT
 		case "bn254":
 			privKey = cmtbn254.GenPrivKeyFromSeed([]byte(mnemonic))
 		default:
-			privKey = tmed25519.GenPrivKeyFromSecret([]byte(mnemonic))
+			privKey = cmtbn254.GenPrivKeyFromSeed([]byte(mnemonic))
 		}
 		filePV = privval.NewFilePV(privKey, pvKeyFile, pvStateFile)
 		filePV.Save()
