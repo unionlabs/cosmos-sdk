@@ -54,3 +54,13 @@ func (k Keeper) MinCommissionRate(ctx context.Context) (math.LegacyDec, error) {
 	params, err := k.Params.Get(ctx)
 	return params.MinCommissionRate, err
 }
+
+func (k Keeper) EpochLength(ctx context.Context) (int64, error) {
+	params, err := k.Params.Get(ctx)
+	return params.EpochLength, err
+}
+
+func (k Keeper) JailedValidatorThreshold(ctx context.Context) (uint32, error) {
+	params, err := k.Params.Get(ctx)
+	return params.JailedValidatorThreshold, err
+}

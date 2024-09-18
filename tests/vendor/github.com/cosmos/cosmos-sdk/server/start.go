@@ -19,7 +19,7 @@ import (
 	cmtcmd "github.com/cometbft/cometbft/cmd/cometbft/commands"
 	cmtcfg "github.com/cometbft/cometbft/config"
 	cmtcrypto "github.com/cometbft/cometbft/crypto"
-	cmted25519 "github.com/cometbft/cometbft/crypto/ed25519"
+	"github.com/cometbft/cometbft/crypto/bn254"
 	cmtjson "github.com/cometbft/cometbft/libs/json"
 	"github.com/cometbft/cometbft/node"
 	"github.com/cometbft/cometbft/p2p"
@@ -375,7 +375,7 @@ func startCmtNode(
 	}
 
 	pv, err := pvm.LoadOrGenFilePV(cfg.PrivValidatorKeyFile(), cfg.PrivValidatorStateFile(), func() (cmtcrypto.PrivKey, error) {
-		return cmted25519.GenPrivKey(), nil
+		return bn254.GenPrivKey(), nil
 	}) // TODO:  make this modular
 	if err != nil {
 		return nil, cleanupFn, err
@@ -801,7 +801,7 @@ func testnetify[T types.Application](ctx *Context, testnetAppCreator types.AppCr
 	defer stateDB.Close()
 
 	privValidator, err := pvm.LoadOrGenFilePV(config.PrivValidatorKeyFile(), config.PrivValidatorStateFile(), func() (cmtcrypto.PrivKey, error) {
-		return cmted25519.GenPrivKey(), nil
+		return bn254.GenPrivKey(), nil
 	}) // TODO: make this modular
 	if err != nil {
 		return nil, err

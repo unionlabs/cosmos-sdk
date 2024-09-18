@@ -10,12 +10,12 @@ import (
 	v11 "github.com/cometbft/cometbft/api/cometbft/p2p/v1"
 	v1 "github.com/cometbft/cometbft/api/cometbft/types/v1"
 	_ "github.com/cosmos/cosmos-proto"
-	types "github.com/cosmos/cosmos-sdk/codec/types"
 	query "github.com/cosmos/cosmos-sdk/types/query"
 	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	grpc1 "github.com/cosmos/gogoproto/grpc"
 	proto "github.com/cosmos/gogoproto/proto"
+	any "github.com/cosmos/gogoproto/types/any"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -262,10 +262,10 @@ func (m *GetLatestValidatorSetResponse) GetPagination() *query.PageResponse {
 
 // Validator is the type for the validator-set.
 type Validator struct {
-	Address          string     `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
-	PubKey           *types.Any `protobuf:"bytes,2,opt,name=pub_key,json=pubKey,proto3" json:"pub_key,omitempty"`
-	VotingPower      int64      `protobuf:"varint,3,opt,name=voting_power,json=votingPower,proto3" json:"voting_power,omitempty"`
-	ProposerPriority int64      `protobuf:"varint,4,opt,name=proposer_priority,json=proposerPriority,proto3" json:"proposer_priority,omitempty"`
+	Address          string   `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	PubKey           *any.Any `protobuf:"bytes,2,opt,name=pub_key,json=pubKey,proto3" json:"pub_key,omitempty"`
+	VotingPower      int64    `protobuf:"varint,3,opt,name=voting_power,json=votingPower,proto3" json:"voting_power,omitempty"`
+	ProposerPriority int64    `protobuf:"varint,4,opt,name=proposer_priority,json=proposerPriority,proto3" json:"proposer_priority,omitempty"`
 }
 
 func (m *Validator) Reset()         { *m = Validator{} }
@@ -308,7 +308,7 @@ func (m *Validator) GetAddress() string {
 	return ""
 }
 
-func (m *Validator) GetPubKey() *types.Any {
+func (m *Validator) GetPubKey() *any.Any {
 	if m != nil {
 		return m.PubKey
 	}
@@ -3431,7 +3431,7 @@ func (m *Validator) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.PubKey == nil {
-				m.PubKey = &types.Any{}
+				m.PubKey = &any.Any{}
 			}
 			if err := m.PubKey.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err

@@ -22,6 +22,40 @@ import (
 
 var timeBzKeySize = uint64(29) // time bytes key size is 29 by default
 
+// Increments the number of jailed validators by one.
+func (k Keeper) IncermentNumberofValidatorsInJail(ctx context.Context) error {
+	n, err := k.NumberOfValidatorsInJail.Get(ctx)
+	if err != nil {
+		return err
+	}
+
+	n += 1
+
+	return k.NumberOfValidatorsInJail.Set(ctx, n)
+}
+
+// Decrement the number of jailed validators by one.
+//
+// There must be some number of jailed validators greater than zero, otherwise this function will return an error.
+func (k Keeper) DecrementNumberofValidatorsInJail(ctx context.Context) error {
+	n, err := k.NumberOfValidatorsInJail.Get(ctx)
+	if err != nil {
+		return err
+	}
+
+	if n == 0 {
+		return types.ErrCannotDecreaseZero
+	}
+
+	n -= 1
+
+	return k.NumberOfValidatorsInJail.Set(ctx, n)
+}
+
+func (k Keeper) ResetNumberofValidatorsInJail(ctx context.Context) error {
+	return k.NumberOfValidatorsInJail.Set(ctx, 0)
+}
+
 // GetValidator gets a single validator
 func (k Keeper) GetValidator(ctx context.Context, addr sdk.ValAddress) (validator types.Validator, err error) {
 	validator, err = k.Validators.Get(ctx, addr)

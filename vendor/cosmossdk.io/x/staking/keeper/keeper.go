@@ -111,7 +111,9 @@ type Keeper struct {
 	OldToNewConsAddrMap collections.Map[[]byte, []byte]
 	// ValidatorConsPubKeyRotationHistory: consPubkey rotation history by validator
 	// A index is being added with key `BlockConsPubKeyRotationHistory`: consPubkey rotation history by height
-	RotationHistory *collections.IndexedMap[collections.Pair[[]byte, uint64], types.ConsPubKeyRotationHistory, rotationHistoryIndexes]
+	RotationHistory           *collections.IndexedMap[collections.Pair[[]byte, uint64], types.ConsPubKeyRotationHistory, rotationHistoryIndexes]
+	NumberOfValidatorsInEpoch collections.Item[uint32]
+	NumberOfValidatorsInJail  collections.Item[uint32]
 }
 
 // NewKeeper creates a new staking Keeper instance
@@ -289,6 +291,8 @@ func NewKeeper(
 			codec.CollValue[types.ConsPubKeyRotationHistory](cdc),
 			NewRotationHistoryIndexes(sb),
 		),
+		NumberOfValidatorsInEpoch: collections.NewItem(sb, types.NumberOfValidatorsInEpochKey, "number_of_validators_in_epoch", collections.Uint32Value),
+		NumberOfValidatorsInJail:  collections.NewItem(sb, types.NumberOfValidatorsInJailKey, "number_of_validators_in_jail", collections.Uint32Value),
 	}
 
 	schema, err := sb.Build()

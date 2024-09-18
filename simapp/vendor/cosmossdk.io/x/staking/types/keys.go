@@ -57,6 +57,9 @@ var (
 	RedelegationQueueKey = collections.NewPrefix(66) // prefix for the timestamps in redelegations queue
 	ValidatorQueueKey    = collections.NewPrefix(67) // prefix for the timestamps in validator queue
 
+	NumberOfValidatorsInEpochKey = collections.NewPrefix(70) // prefix for the number of validators in the active set at the start of the current epoch
+	NumberOfValidatorsInJailKey  = collections.NewPrefix(71) // prefix for the number of validators, from the current epoch validator set, in jail
+
 	ParamsKey = collections.NewPrefix(81) // prefix for parameters for module x/staking
 
 	DelegationByValIndexKey = collections.NewPrefix(113) // key for delegations by a validator
