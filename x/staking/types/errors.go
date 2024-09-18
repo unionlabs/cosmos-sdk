@@ -50,4 +50,6 @@ var (
 	// consensus key errors
 	ErrExceedingMaxConsPubKeyRotations = errors.Register(ModuleName, 46, "exceeding maximum consensus pubkey rotations within unbonding period")
 	ErrConsensusPubKeyLenInvalid       = errors.Register(ModuleName, 47, "consensus pubkey len is invalid")
+
+	ErrCannotDecreaseZero = errors.Register(ModuleName, 48, "cannot decrease value below zero")
 )
