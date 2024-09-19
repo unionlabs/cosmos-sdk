@@ -537,7 +537,6 @@ func DefaultSigVerificationGasConsumer(meter gas.Meter, sig signing.SignatureV2,
 		}
 
 		return nil
-
 	default:
 		return errorsmod.Wrapf(sdkerrors.ErrInvalidPubKey, "unrecognized public key type: %T", pubkey)
 	}
