@@ -6,8 +6,6 @@ replace (
 	// pseudo version lower than the latest tag
 	cosmossdk.io/api => cosmossdk.io/api v0.7.3-0.20240815194237-858ec2fcb897 // main
 	// pseudo version lower than the latest tag
-	cosmossdk.io/core => cosmossdk.io/core v1.0.0-alpha.1 // main
-	// pseudo version lower than the latest tag
 	cosmossdk.io/store => cosmossdk.io/store v1.0.0-rc.0.0.20240906090851-36d9b25e8981 // main
 	cosmossdk.io/x/bank => ../../../x/bank
 	cosmossdk.io/x/consensus => ../../../x/consensus
@@ -22,7 +20,7 @@ replace (
 require (
 	buf.build/gen/go/cometbft/cometbft/protocolbuffers/go v1.34.2-20240701160653-fedbb9acfd2f.2
 	cosmossdk.io/api v0.8.0
-	cosmossdk.io/core v1.0.0 // main
+	cosmossdk.io/core v1.0.0-alpha.1 // main
 	cosmossdk.io/errors v1.0.1
 	cosmossdk.io/log v1.4.1
 	cosmossdk.io/server/v2 v2.0.0-20240829074658-81a225e6a29b // main
