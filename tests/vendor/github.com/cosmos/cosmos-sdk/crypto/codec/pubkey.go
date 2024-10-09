@@ -5,6 +5,7 @@ import (
 
 	cryptokeys "github.com/cosmos/cosmos-sdk/crypto/keys"
 	bls12_381 "github.com/cosmos/cosmos-sdk/crypto/keys/bls12_381"
+	bn254 "github.com/cosmos/cosmos-sdk/crypto/keys/bn254"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -23,6 +24,10 @@ func PubKeyToProto(pk cryptokeys.JSONPubkey) (cryptotypes.PubKey, error) {
 		}, nil
 	case bls12_381.PubKeyName:
 		return &bls12_381.PubKey{
+			Key: pk.Value,
+		}, nil
+	case bn254.PubKeyName:
+		return &bn254.PubKey{
 			Key: pk.Value,
 		}, nil
 	default:
@@ -45,6 +50,11 @@ func PubKeyFromProto(pk cryptotypes.PubKey) (cryptokeys.JSONPubkey, error) {
 	case *bls12_381.PubKey:
 		return cryptokeys.JSONPubkey{
 			KeyType: bls12_381.PubKeyName,
+			Value:   pk.Bytes(),
+		}, nil
+	case *bn254.PubKey:
+		return cryptokeys.JSONPubkey{
+			KeyType: bn254.PrivKeyName,
 			Value:   pk.Bytes(),
 		}, nil
 	default:
