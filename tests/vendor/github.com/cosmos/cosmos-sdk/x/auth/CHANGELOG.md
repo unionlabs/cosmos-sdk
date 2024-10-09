@@ -29,7 +29,6 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 * [#18641](https://github.com/cosmos/cosmos-sdk/pull/18641) Support the ability to broadcast unordered transactions per ADR-070. See UPGRADING.md for more details on integration.
 * [#18281](https://github.com/cosmos/cosmos-sdk/pull/18281) Support broadcasting multiple transactions.
-* (vesting) [#17810](https://github.com/cosmos/cosmos-sdk/pull/17810) Add the ability to specify a start time for continuous vesting accounts.
 
 ### Improvements
 
@@ -60,7 +59,9 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 * [#18817](https://github.com/cosmos/cosmos-sdk/pull/18817) SigVerification, GasConsumption, IncreaseSequence ante decorators have all been joined into one SigVerification decorator. Gas consumption during TX validation flow has reduced.
 * [#19093](https://github.com/cosmos/cosmos-sdk/pull/19093) SetPubKeyDecorator was merged into SigVerification, gas consumption is almost halved for a simple tx.
-
+* [#19535](https://github.com/cosmos/cosmos-sdk/pull/19535) Remove vesting account creation when the chain is running. The accounts module is required for creating [#vesting accounts](../accounts/defaults/lockup/README.md) on a running chain. 
+* [#21688](https://github.com/cosmos/cosmos-sdk/pull/21688) Allow x/accounts to be queriable from the `AccountInfo` and `Account` gRPC endpoints
+* [#21820](https://github.com/cosmos/cosmos-sdk/pull/21820) Allow x/auth `BaseAccount` to migrate to a `x/accounts` via the new `MsgMigrateAccount`. 
 ### Bug Fixes
 
 * [#19148](https://github.com/cosmos/cosmos-sdk/pull/19148) Checks the consumed gas for verifying a multisig pubKey signature during simulation.

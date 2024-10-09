@@ -33,8 +33,8 @@ cloud.google.com/go/auth/internal/transport/cert
 # cloud.google.com/go/auth/oauth2adapt v0.2.2
 ## explicit; go 1.19
 cloud.google.com/go/auth/oauth2adapt
-# cloud.google.com/go/compute/metadata v0.3.0
-## explicit; go 1.19
+# cloud.google.com/go/compute/metadata v0.5.0
+## explicit; go 1.20
 cloud.google.com/go/compute/metadata
 # cloud.google.com/go/iam v1.1.8
 ## explicit; go 1.19
@@ -46,7 +46,7 @@ cloud.google.com/go/storage
 cloud.google.com/go/storage/internal
 cloud.google.com/go/storage/internal/apiv2
 cloud.google.com/go/storage/internal/apiv2/storagepb
-# cosmossdk.io/api v0.8.0 => cosmossdk.io/api v0.7.3-0.20240815194237-858ec2fcb897
+# cosmossdk.io/api v0.8.0 => cosmossdk.io/api v0.7.3-0.20240924065902-eb7653cfecdf
 ## explicit; go 1.21
 cosmossdk.io/api/amino
 cosmossdk.io/api/cosmos/accounts/module/v1
@@ -108,6 +108,7 @@ cosmossdk.io/api/cosmos/tx/signing/v1beta1
 cosmossdk.io/api/cosmos/tx/v1beta1
 cosmossdk.io/api/cosmos/upgrade/module/v1
 cosmossdk.io/api/cosmos/upgrade/v1beta1
+cosmossdk.io/api/cosmos/validate/module/v1
 cosmossdk.io/api/cosmos/vesting/module/v1
 cosmossdk.io/api/cosmos/vesting/v1beta1
 # cosmossdk.io/client/v2 v2.0.0-20230630094428-02b760776860 => ../client/v2
@@ -126,7 +127,7 @@ cosmossdk.io/client/v2/internal/util
 cosmossdk.io/collections
 cosmossdk.io/collections/codec
 cosmossdk.io/collections/indexes
-# cosmossdk.io/core v1.0.0-alpha.1
+# cosmossdk.io/core v1.0.0-alpha.4
 ## explicit; go 1.23
 cosmossdk.io/core/address
 cosmossdk.io/core/appmodule
@@ -144,7 +145,7 @@ cosmossdk.io/core/router
 cosmossdk.io/core/server
 cosmossdk.io/core/store
 cosmossdk.io/core/transaction
-# cosmossdk.io/core/testing v0.0.0-20240909133312-50288938d1b6
+# cosmossdk.io/core/testing v0.0.0-20240913164418-aaf72f20c10b
 ## explicit; go 1.23
 cosmossdk.io/core/testing
 # cosmossdk.io/depinject v1.0.0
@@ -165,7 +166,7 @@ cosmossdk.io/log
 ## explicit; go 1.20
 cosmossdk.io/math
 cosmossdk.io/math/unsafe
-# cosmossdk.io/schema v0.2.0
+# cosmossdk.io/schema v0.3.1-0.20240930054013-7c6e0388a3f9
 ## explicit; go 1.12
 cosmossdk.io/schema
 cosmossdk.io/schema/addressutil
@@ -177,13 +178,14 @@ cosmossdk.io/schema/view
 # cosmossdk.io/simapp v0.0.0-20230309163709-87da587416ba => ../simapp
 ## explicit; go 1.23.1
 cosmossdk.io/simapp
-# cosmossdk.io/store v1.1.1-0.20240909133312-50288938d1b6 => cosmossdk.io/store v1.0.0-rc.0.0.20240906090851-36d9b25e8981
-## explicit; go 1.22.2
+# cosmossdk.io/store v1.1.1-0.20240909133312-50288938d1b6 => cosmossdk.io/store v1.0.0-rc.0.0.20240913190136-3bc707a5a214
+## explicit; go 1.23
 cosmossdk.io/store
 cosmossdk.io/store/cache
 cosmossdk.io/store/cachekv
 cosmossdk.io/store/cachekv/internal
 cosmossdk.io/store/cachemulti
+cosmossdk.io/store/db
 cosmossdk.io/store/dbadapter
 cosmossdk.io/store/gaskv
 cosmossdk.io/store/iavl
@@ -206,13 +208,11 @@ cosmossdk.io/store/streaming/abci
 cosmossdk.io/store/tracekv
 cosmossdk.io/store/transient
 cosmossdk.io/store/types
-# cosmossdk.io/x/accounts v0.0.0-20240226161501-23359a0b6d91 => ../x/accounts
+# cosmossdk.io/x/accounts v0.0.0-20240913065641-0064ccbce64e => ../x/accounts
 ## explicit; go 1.23.1
 cosmossdk.io/x/accounts
 cosmossdk.io/x/accounts/accountstd
 cosmossdk.io/x/accounts/cli
-cosmossdk.io/x/accounts/defaults/base
-cosmossdk.io/x/accounts/defaults/base/v1
 cosmossdk.io/x/accounts/interfaces/account_abstraction/v1
 cosmossdk.io/x/accounts/internal/implementation
 cosmossdk.io/x/accounts/internal/prefixstore
@@ -221,19 +221,25 @@ cosmossdk.io/x/accounts/testing/counter
 cosmossdk.io/x/accounts/testing/counter/v1
 cosmossdk.io/x/accounts/testing/rotation/v1
 cosmossdk.io/x/accounts/v1
+# cosmossdk.io/x/accounts/defaults/base v0.0.0-00010101000000-000000000000 => ../x/accounts/defaults/base
+## explicit; go 1.23.1
+cosmossdk.io/x/accounts/defaults/base
+cosmossdk.io/x/accounts/defaults/base/depinject
+cosmossdk.io/x/accounts/defaults/base/v1
 # cosmossdk.io/x/accounts/defaults/lockup v0.0.0-20240417181816-5e7aae0db1f5 => ../x/accounts/defaults/lockup
 ## explicit; go 1.23.1
 cosmossdk.io/x/accounts/defaults/lockup
+cosmossdk.io/x/accounts/defaults/lockup/depinject
 cosmossdk.io/x/accounts/defaults/lockup/types
 # cosmossdk.io/x/accounts/defaults/multisig v0.0.0-00010101000000-000000000000 => ../x/accounts/defaults/multisig
 ## explicit; go 1.23.1
 cosmossdk.io/x/accounts/defaults/multisig
+cosmossdk.io/x/accounts/defaults/multisig/depinject
 cosmossdk.io/x/accounts/defaults/multisig/v1
 # cosmossdk.io/x/authz v0.0.0-00010101000000-000000000000 => ../x/authz
 ## explicit; go 1.23.1
 cosmossdk.io/x/authz
 cosmossdk.io/x/authz/client/cli
-cosmossdk.io/x/authz/client/testutil
 cosmossdk.io/x/authz/internal/conv
 cosmossdk.io/x/authz/keeper
 cosmossdk.io/x/authz/migrations/v2
@@ -356,7 +362,7 @@ cosmossdk.io/x/staking/migrations/v6
 cosmossdk.io/x/staking/simulation
 cosmossdk.io/x/staking/testutil
 cosmossdk.io/x/staking/types
-# cosmossdk.io/x/tx v0.14.0 => cosmossdk.io/x/tx v0.13.4-0.20240815194237-858ec2fcb897
+# cosmossdk.io/x/tx v0.14.0 => cosmossdk.io/x/tx v0.13.4-0.20241003111526-30003f667944
 ## explicit; go 1.23
 cosmossdk.io/x/tx/decode
 cosmossdk.io/x/tx/signing
@@ -364,7 +370,6 @@ cosmossdk.io/x/tx/signing/aminojson
 cosmossdk.io/x/tx/signing/aminojson/internal/aminojsonpb
 cosmossdk.io/x/tx/signing/direct
 cosmossdk.io/x/tx/signing/directaux
-cosmossdk.io/x/tx/signing/testutil
 cosmossdk.io/x/tx/signing/textual
 cosmossdk.io/x/tx/signing/textual/internal/cbor
 cosmossdk.io/x/tx/signing/textual/internal/textualpb
@@ -655,7 +660,7 @@ github.com/cometbft/cometbft/types
 github.com/cometbft/cometbft/types/errors
 github.com/cometbft/cometbft/types/time
 github.com/cometbft/cometbft/version
-# github.com/cometbft/cometbft-db v0.15.0
+# github.com/cometbft/cometbft-db v1.0.1
 ## explicit; go 1.23.1
 github.com/cometbft/cometbft-db
 # github.com/cometbft/cometbft/api v1.0.0-rc.1 => github.com/unionlabs/cometbft/api v0.0.0-20240914184101-19d0b7eff401
@@ -732,6 +737,7 @@ github.com/cosmos/cosmos-sdk/crypto
 github.com/cosmos/cosmos-sdk/crypto/codec
 github.com/cosmos/cosmos-sdk/crypto/hd
 github.com/cosmos/cosmos-sdk/crypto/keyring
+github.com/cosmos/cosmos-sdk/crypto/keys
 github.com/cosmos/cosmos-sdk/crypto/keys/bcrypt
 github.com/cosmos/cosmos-sdk/crypto/keys/bls12_381
 github.com/cosmos/cosmos-sdk/crypto/keys/bn254
@@ -758,11 +764,14 @@ github.com/cosmos/cosmos-sdk/server/grpc
 github.com/cosmos/cosmos-sdk/server/grpc/gogoreflection
 github.com/cosmos/cosmos-sdk/server/grpc/reflection/v2alpha1
 github.com/cosmos/cosmos-sdk/server/log
+github.com/cosmos/cosmos-sdk/server/mock
 github.com/cosmos/cosmos-sdk/server/types
+github.com/cosmos/cosmos-sdk/simsx
 github.com/cosmos/cosmos-sdk/std
 github.com/cosmos/cosmos-sdk/telemetry
 github.com/cosmos/cosmos-sdk/testutil
 github.com/cosmos/cosmos-sdk/testutil/cli
+github.com/cosmos/cosmos-sdk/testutil/cmdtest
 github.com/cosmos/cosmos-sdk/testutil/configurator
 github.com/cosmos/cosmos-sdk/testutil/integration
 github.com/cosmos/cosmos-sdk/testutil/mock
@@ -773,6 +782,7 @@ github.com/cosmos/cosmos-sdk/testutil/testdata/testpb
 github.com/cosmos/cosmos-sdk/testutil/x/counter
 github.com/cosmos/cosmos-sdk/testutil/x/counter/keeper
 github.com/cosmos/cosmos-sdk/testutil/x/counter/types
+github.com/cosmos/cosmos-sdk/testutil/x/genutil
 github.com/cosmos/cosmos-sdk/types
 github.com/cosmos/cosmos-sdk/types/address
 github.com/cosmos/cosmos-sdk/types/authz
@@ -812,10 +822,11 @@ github.com/cosmos/cosmos-sdk/x/auth/vesting/exported
 github.com/cosmos/cosmos-sdk/x/auth/vesting/types
 github.com/cosmos/cosmos-sdk/x/genutil
 github.com/cosmos/cosmos-sdk/x/genutil/client/cli
-github.com/cosmos/cosmos-sdk/x/genutil/client/testutil
+github.com/cosmos/cosmos-sdk/x/genutil/migration/v052
 github.com/cosmos/cosmos-sdk/x/genutil/types
 github.com/cosmos/cosmos-sdk/x/simulation
 github.com/cosmos/cosmos-sdk/x/simulation/client/cli
+github.com/cosmos/cosmos-sdk/x/validate
 # github.com/cosmos/crypto v0.1.2
 ## explicit; go 1.22.2
 github.com/cosmos/crypto/curves/bls12381
@@ -877,7 +888,7 @@ github.com/dgraph-io/badger/v4/skl
 github.com/dgraph-io/badger/v4/table
 github.com/dgraph-io/badger/v4/trie
 github.com/dgraph-io/badger/v4/y
-# github.com/dgraph-io/ristretto v0.1.2-0.20240116140435-c67e07994f91
+# github.com/dgraph-io/ristretto v1.0.0
 ## explicit; go 1.19
 github.com/dgraph-io/ristretto
 github.com/dgraph-io/ristretto/z
@@ -907,7 +918,7 @@ github.com/felixge/httpsnoop
 # github.com/fsnotify/fsnotify v1.7.0
 ## explicit; go 1.17
 github.com/fsnotify/fsnotify
-# github.com/getsentry/sentry-go v0.28.1
+# github.com/getsentry/sentry-go v0.29.0
 ## explicit; go 1.18
 github.com/getsentry/sentry-go
 github.com/getsentry/sentry-go/internal/debug
@@ -1109,7 +1120,7 @@ github.com/hdevalence/ed25519consensus
 # github.com/holiman/uint256 v1.3.1
 ## explicit; go 1.19
 github.com/holiman/uint256
-# github.com/huandu/skiplist v1.2.0
+# github.com/huandu/skiplist v1.2.1
 ## explicit; go 1.12
 github.com/huandu/skiplist
 # github.com/iancoleman/strcase v0.3.0
@@ -1118,8 +1129,8 @@ github.com/iancoleman/strcase
 # github.com/inconshreveable/mousetrap v1.1.0
 ## explicit; go 1.18
 github.com/inconshreveable/mousetrap
-# github.com/jhump/protoreflect v1.16.0
-## explicit; go 1.19
+# github.com/jhump/protoreflect v1.17.0
+## explicit; go 1.21
 github.com/jhump/protoreflect/desc
 github.com/jhump/protoreflect/desc/internal
 github.com/jhump/protoreflect/desc/sourceinfo
@@ -1131,8 +1142,8 @@ github.com/jmespath/go-jmespath
 # github.com/jmhodges/levigo v1.0.0
 ## explicit
 github.com/jmhodges/levigo
-# github.com/klauspost/compress v1.17.9
-## explicit; go 1.20
+# github.com/klauspost/compress v1.17.10
+## explicit; go 1.21
 github.com/klauspost/compress
 github.com/klauspost/compress/fse
 github.com/klauspost/compress/huff0
@@ -1246,7 +1257,7 @@ github.com/pkg/errors
 # github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2
 ## explicit
 github.com/pmezard/go-difflib/difflib
-# github.com/prometheus/client_golang v1.20.3
+# github.com/prometheus/client_golang v1.20.4
 ## explicit; go 1.20
 github.com/prometheus/client_golang/internal/github.com/golang/gddo/httputil
 github.com/prometheus/client_golang/internal/github.com/golang/gddo/httputil/header
@@ -1269,8 +1280,8 @@ github.com/prometheus/procfs/internal/util
 # github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475
 ## explicit
 github.com/rcrowley/go-metrics
-# github.com/rogpeppe/go-internal v1.12.0
-## explicit; go 1.20
+# github.com/rogpeppe/go-internal v1.13.1
+## explicit; go 1.22
 github.com/rogpeppe/go-internal/fmtsort
 # github.com/rs/cors v1.11.0
 ## explicit; go 1.13
@@ -1507,6 +1518,7 @@ golang.org/x/sys/execabs
 golang.org/x/sys/plan9
 golang.org/x/sys/unix
 golang.org/x/sys/windows
+golang.org/x/sys/windows/registry
 # golang.org/x/term v0.24.0
 ## explicit; go 1.18
 golang.org/x/term
@@ -1573,17 +1585,17 @@ google.golang.org/api/transport/http/internal/propagation
 google.golang.org/genproto/googleapis/type/date
 google.golang.org/genproto/googleapis/type/expr
 google.golang.org/genproto/protobuf/field_mask
-# google.golang.org/genproto/googleapis/api v0.0.0-20240617180043-68d350f18fd4
-## explicit; go 1.20
+# google.golang.org/genproto/googleapis/api v0.0.0-20240814211410-ddb44dafa142
+## explicit; go 1.21
 google.golang.org/genproto/googleapis/api
 google.golang.org/genproto/googleapis/api/annotations
 google.golang.org/genproto/googleapis/api/httpbody
-# google.golang.org/genproto/googleapis/rpc v0.0.0-20240827150818-7e3bb234dfed
+# google.golang.org/genproto/googleapis/rpc v0.0.0-20240930140551-af27646dc61f
 ## explicit; go 1.21
 google.golang.org/genproto/googleapis/rpc/code
 google.golang.org/genproto/googleapis/rpc/errdetails
 google.golang.org/genproto/googleapis/rpc/status
-# google.golang.org/grpc v1.66.0
+# google.golang.org/grpc v1.67.1
 ## explicit; go 1.21
 google.golang.org/grpc
 google.golang.org/grpc/attributes
@@ -1730,10 +1742,11 @@ rsc.io/tmplfunc/internal/parse
 ## explicit; go 1.12
 sigs.k8s.io/yaml
 sigs.k8s.io/yaml/goyaml.v2
-# cosmossdk.io/api => cosmossdk.io/api v0.7.3-0.20240815194237-858ec2fcb897
+# cosmossdk.io/api => cosmossdk.io/api v0.7.3-0.20240924065902-eb7653cfecdf
 # cosmossdk.io/client/v2 => ../client/v2
-# cosmossdk.io/store => cosmossdk.io/store v1.0.0-rc.0.0.20240906090851-36d9b25e8981
+# cosmossdk.io/store => cosmossdk.io/store v1.0.0-rc.0.0.20240913190136-3bc707a5a214
 # cosmossdk.io/x/accounts => ../x/accounts
+# cosmossdk.io/x/accounts/defaults/base => ../x/accounts/defaults/base
 # cosmossdk.io/x/accounts/defaults/lockup => ../x/accounts/defaults/lockup
 # cosmossdk.io/x/accounts/defaults/multisig => ../x/accounts/defaults/multisig
 # cosmossdk.io/x/authz => ../x/authz
@@ -1752,7 +1765,7 @@ sigs.k8s.io/yaml/goyaml.v2
 # cosmossdk.io/x/protocolpool => ../x/protocolpool
 # cosmossdk.io/x/slashing => ../x/slashing
 # cosmossdk.io/x/staking => ../x/staking
-# cosmossdk.io/x/tx => cosmossdk.io/x/tx v0.13.4-0.20240815194237-858ec2fcb897
+# cosmossdk.io/x/tx => cosmossdk.io/x/tx v0.13.4-0.20241003111526-30003f667944
 # cosmossdk.io/x/upgrade => ../x/upgrade
 # cosmossdk.io/simapp => ../simapp
 # github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0

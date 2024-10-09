@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## v1.0.1
+
+*September 23, 2024*
+
+This release reverts the addition of the `goleveldb` flag, which was deemed as
+too disruptive to users.
+
+## v1.0.0
+
+*September 20, 2024*
+
+This release swaps the "default" DB from goleveldb to pebbledb. There's now a
+`goleveldb` build flag that must be used when using goleveldb. If you're using
+`pebbledb`, you don't need a build flag anymore.
+
+### BREAKING
+
+- Add `goleveldb` build flag.
+  ([\#202](https://github.com/cometbft/cometbft-db/pull/202))
+
 ## v0.15.0
 
 *September 9, 2024*
