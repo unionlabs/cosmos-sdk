@@ -12,7 +12,7 @@ option go_package = "github.com/cosmos/cosmos-sdk/crypto/keys/bn254";
 // ADR-28. Nevertheless, you will like to use bn254 in app user level
 // then you must create a new proto message and follow ADR-28 for Address construction.
 message PubKey {
-  option (amino.name) = "tendermint/PubKeyBn254";
+  option (amino.name) = "cometbft/PubKeyBn254";
   // The Amino encoding is simply the inner bytes field, and not the Amino
   // encoding of the whole PubKey struct.
   //
@@ -32,7 +32,7 @@ message PubKey {
 // Deprecated: PrivKey defines a bn254 private key.
 // NOTE: bn254 keys must not be used in SDK apps except in a tendermint validator context.
 message PrivKey {
-  option (amino.name)             = "tendermint/PrivKeyBn254";
+  option (amino.name)             = "cometbft/PrivKeyBn254";
   option (amino.message_encoding) = "key_field";
 
   bytes key = 1 [(gogoproto.casttype) = "github.com/cometbft/cometbft/crypto/bn254.PrivKey"];
