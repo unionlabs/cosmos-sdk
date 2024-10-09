@@ -166,7 +166,16 @@ require (
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
 
-require github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect
+require (
+	github.com/bits-and-blooms/bitset v1.7.0 // indirect
+	github.com/consensys/bavard v0.1.13 // indirect
+	github.com/consensys/gnark-crypto v0.12.1 // indirect
+	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect
+	github.com/holiman/uint256 v1.3.1 // indirect
+	github.com/mmcloughlin/addchain v0.4.0 // indirect
+	github.com/tunabay/go-bitarray v1.3.1 // indirect
+	rsc.io/tmplfunc v0.0.3 // indirect
+)
 
 replace github.com/cosmos/cosmos-sdk => ../../.
 
