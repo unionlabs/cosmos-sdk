@@ -511,10 +511,10 @@ github.com/tendermint/go-amino v0.16.0/go.mod h1:TQU0M1i/ImAo+tYpZi73AU3V/dKeCoM
 github.com/tidwall/btree v1.7.0 h1:L1fkJH/AuEh5zBnnBbmTwQ5Lt+bRJ5A8EWecslvo9iI=
 github.com/tidwall/btree v1.7.0/go.mod h1:twD9XRA5jj9VUQGELzDO4HPQTNJsoWWfYEL+EUQ2cKY=
 github.com/tv42/httpunix v0.0.0-20150427012821-b75d8614f926/go.mod h1:9ESjWnEqriFuLhtthL60Sar/7RFoluCcXsuvEwTV5KM=
-github.com/unionlabs/cometbft v0.0.0-20240914184101-19d0b7eff401 h1:8qmFy35ciYedz11awG5bfq6j3bB4C73db048BRETxDY=
-github.com/unionlabs/cometbft v0.0.0-20240914184101-19d0b7eff401/go.mod h1:543Zt3C5ZchxJD+0FgKF6EuCbopOef2NeIfaQEE+4LA=
-github.com/unionlabs/cometbft/api v0.0.0-20240914184101-19d0b7eff401 h1:39YFOly2Zw6mN4Ds5gYps/0ExDAY9EaKeM0GGZl2+2o=
-github.com/unionlabs/cometbft/api v0.0.0-20240914184101-19d0b7eff401/go.mod h1:NDFKiBBD8HJC6QQLAoUI99YhsiRZtg2+FJWfk6A6m6o=
+github.com/unionlabs/cometbft v0.0.0-20241009165438-d82e5fece358 h1:VKEBplUYiVM1byu0bYawkzVNhi11ij8yTwKDm4ZTioE=
+github.com/unionlabs/cometbft v0.0.0-20241009165438-d82e5fece358/go.mod h1:543Zt3C5ZchxJD+0FgKF6EuCbopOef2NeIfaQEE+4LA=
+github.com/unionlabs/cometbft/api v0.0.0-20241009165438-d82e5fece358 h1:vNGj3g12hmcfH6rDMYxcpfAONqgthFtEkR9Rf0h8RC0=
+github.com/unionlabs/cometbft/api v0.0.0-20241009165438-d82e5fece358/go.mod h1:NDFKiBBD8HJC6QQLAoUI99YhsiRZtg2+FJWfk6A6m6o=
 github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578 h1:Owzup0XvshGNHgS1s0xUI/mZM+fPvTT7dLg7P0cT2vQ=
 github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578/go.mod h1:v2Gy7L/4ZRosZ7Ivs+9SfUDr0f5UlG+EM5t7MPHiLuY=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=

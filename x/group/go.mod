@@ -209,7 +209,7 @@ replace (
 	cosmossdk.io/x/slashing => ../slashing
 	cosmossdk.io/x/staking => ../staking
 
-	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20240914184101-19d0b7eff401
-	github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20240914184101-19d0b7eff401
+	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20241009165438-d82e5fece358
+	github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20241009165438-d82e5fece358
 	github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
 )
