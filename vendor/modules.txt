@@ -283,7 +283,7 @@ github.com/cockroachdb/redact/internal/rfmt/fmtsort
 # github.com/cockroachdb/tokenbucket v0.0.0-20230807174530-cc333fc44b06
 ## explicit; go 1.19
 github.com/cockroachdb/tokenbucket
-# github.com/cometbft/cometbft v1.0.0-rc1.0.20240908111210-ab0be101882f => github.com/unionlabs/cometbft v0.0.0-20240914184101-19d0b7eff401
+# github.com/cometbft/cometbft v1.0.0-rc1.0.20240908111210-ab0be101882f => github.com/unionlabs/cometbft v0.0.0-20241009165438-d82e5fece358
 ## explicit; go 1.22.5
 github.com/cometbft/cometbft/abci/client
 github.com/cometbft/cometbft/abci/example/kvstore
@@ -384,7 +384,7 @@ github.com/cometbft/cometbft/version
 # github.com/cometbft/cometbft-db v1.0.1
 ## explicit; go 1.23.1
 github.com/cometbft/cometbft-db
-# github.com/cometbft/cometbft/api v1.0.0-rc.1 => github.com/unionlabs/cometbft/api v0.0.0-20240914184101-19d0b7eff401
+# github.com/cometbft/cometbft/api v1.0.0-rc.1 => github.com/unionlabs/cometbft/api v0.0.0-20241009165438-d82e5fece358
 ## explicit; go 1.22
 github.com/cometbft/cometbft/api/cometbft/abci/v1
 github.com/cometbft/cometbft/api/cometbft/blocksync/v1
@@ -1199,8 +1199,8 @@ sigs.k8s.io/yaml/goyaml.v2
 # cosmossdk.io/x/bank => ./x/bank
 # cosmossdk.io/x/staking => ./x/staking
 # github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
-# github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20240914184101-19d0b7eff401
-# github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20240914184101-19d0b7eff401
+# github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20241009165438-d82e5fece358
+# github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20241009165438-d82e5fece358
 # github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
 # github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 # github.com/tunabay/go-bitarray => github.com/poisonphang/go-bitarray v0.0.0-20240912214703-d6127bb4d1bd
