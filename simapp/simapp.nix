@@ -44,7 +44,6 @@
         overrideModAttrs = (_: {
           CGO_LDFLAGS = cgo_ldflags;
           GOPRIVATE = "github.com/unionlabs/*";
-          GOFLAGS = "-mod=vendor";
           GOWORK = "off";
         });
       };
