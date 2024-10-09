@@ -2,6 +2,7 @@ package keys
 
 import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/bls12_381"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/bn254"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/cosmos/cosmos-sdk/crypto/types"
@@ -31,6 +32,11 @@ func (pk JSONPubkey) Address() types.Address {
 			Key: pk.Value,
 		}
 		return bls12_381.Address()
+	case bn254.PubKeyName:
+		bn254 := bn254.PubKey{
+			Key: pk.Value,
+		}
+		return bn254.Address()
 	default:
 		return nil
 	}
