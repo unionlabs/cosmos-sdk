@@ -23,7 +23,7 @@
         inherit ldflags;
         name = pname;
         src = ./.;
-        vendorHash = null;
+        vendorHash = "";
         doCheck = true;
         subPackages = [ "simd" ];
         # checkPhase = ''

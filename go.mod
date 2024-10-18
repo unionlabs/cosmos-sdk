@@ -201,8 +201,8 @@ replace (
 	// use cosmos fork of keyring
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 
-	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20241009165438-d82e5fece358
-	github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20241009165438-d82e5fece358
+	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20241018160710-40cbc598984d
+	github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20241018160710-40cbc598984d
 	github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
 	// replace broken goleveldb
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7

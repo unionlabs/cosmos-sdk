@@ -277,8 +277,8 @@ replace (
 	cosmossdk.io/simapp => ../simapp
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 
-	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20241009165438-d82e5fece358
-	github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20241009165438-d82e5fece358
+	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20241018160710-40cbc598984d
+	github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20241018160710-40cbc598984d
 	github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
 	// We always want to test against the latest version of the SDK.
 	github.com/cosmos/cosmos-sdk => ../.

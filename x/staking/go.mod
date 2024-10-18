@@ -186,7 +186,7 @@ replace (
 	cosmossdk.io/store => cosmossdk.io/store v1.0.0-rc.0.0.20240913190136-3bc707a5a214 // main
 	cosmossdk.io/x/bank => ../bank
 
-	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20241009165438-d82e5fece358
-	github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20241009165438-d82e5fece358
+	github.com/cometbft/cometbft => github.com/unionlabs/cometbft v0.0.0-20241018160710-40cbc598984d
+	github.com/cometbft/cometbft/api => github.com/unionlabs/cometbft/api v0.0.0-20241018160710-40cbc598984d
 	github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
 )
