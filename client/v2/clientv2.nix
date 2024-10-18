@@ -11,7 +11,7 @@
         dontBuild = true;
         checkPhase = ''
           export HOME=$(pwd)
-          export GOFLAGS="-mod=vendor -tags=\"cgo,ledger,test_ledger_mock,norace\""
+          export GOFLAGS="-tags=\"cgo,ledger,test_ledger_mock,norace\""
           export GOPRIVATE="github.com/unionlabs/*";
           export GOWORK="off"
 

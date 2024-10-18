@@ -29,8 +29,7 @@
         # checkPhase = ''
         #   export HOME=$(pwd)
         #   export CGO_LDFLAGS="${cgo_ldflags}"
-        #   # export GOFLAGS="-mod=vendor -tags=\"cgo,ledger,test_ledger_mock,norace\""
-        #   export GOFLAGS="-mod=vendor"
+        #   # export GOFLAGS="-tags=\"cgo,ledger,test_ledger_mock,norace\""
         #   export GOWORK="off"
 
         #   echo "Running test for ${pname}"

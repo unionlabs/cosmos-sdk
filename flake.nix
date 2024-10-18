@@ -175,7 +175,7 @@
                 # Go will try to create a .cache/ dir in $HOME.
                 # We avoid this by setting $HOME to the builder directory
                 export HOME=$(pwd)
-                export GOFLAGS="-mod=vendor -tags=\"cgo,ledger,test_ledger_mock,norace\""
+                export GOFLAGS="-tags=\"cgo,ledger,test_ledger_mock,norace\""
                 export GOPRIVATE="github.com/unionlabs/*";
                 export GOWORK="off"
 
