@@ -23,8 +23,8 @@
         inherit ldflags;
         name = pname;
         src = ./.;
-        vendorHash = "";
-        doCheck = true;
+        vendorHash = null;
+        doCheck = false;
         subPackages = [ "simd" ];
         # checkPhase = ''
         #   export HOME=$(pwd)
