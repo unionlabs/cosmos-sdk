@@ -60,7 +60,7 @@ func CollectGenTxsCmd(validator types.MessageValidator) *cobra.Command {
 			return displayInfo(cmd.ErrOrStderr(), toPrint)
 		},
 	}
-	cmd.Flags().String(FlagConsensusKeyAlgo, "ed25519", "algorithm to use for the consensus key")
+	cmd.Flags().String(FlagConsensusKeyAlgo, "bn254", "algorithm to use for the consensus key")
 	cmd.Flags().String(flagGenTxDir, "", "override default \"gentx\" directory from which collect and execute genesis transactions; default [--home]/config/gentx/")
 
 	return cmd

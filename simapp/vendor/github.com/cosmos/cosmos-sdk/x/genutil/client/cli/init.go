@@ -116,7 +116,6 @@ func InitCmd(mm genesisMM) *cobra.Command {
 			}
 
 			consensusKey, err := cmd.Flags().GetString(FlagConsensusKeyAlgo)
-			print(consensusKey)
 			if err != nil {
 				return errorsmod.Wrap(err, "Failed to get consensus key algo")
 			}
@@ -189,7 +188,7 @@ func InitCmd(mm genesisMM) *cobra.Command {
 	cmd.Flags().String(flags.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
 	cmd.Flags().String(FlagDefaultBondDenom, "", "genesis file default denomination, if left blank default value is 'stake'")
 	cmd.Flags().Int64(flags.FlagInitHeight, 1, "specify the initial block height at genesis")
-	cmd.Flags().String(FlagConsensusKeyAlgo, "ed25519", "algorithm to use for the consensus key")
+	cmd.Flags().String(FlagConsensusKeyAlgo, "bn254", "algorithm to use for the consensus key")
 
 	return cmd
 }
