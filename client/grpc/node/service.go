@@ -52,6 +52,10 @@ func (s queryServer) Status(ctx context.Context, _ *StatusRequest) (*StatusRespo
 
 	blockTime := sdkCtx.HeaderInfo().Time
 
+	print("")
+	print(blockTime)
+	print("")
+
 	return &StatusResponse{
 		// TODO: Get earliest version from store.
 		//
