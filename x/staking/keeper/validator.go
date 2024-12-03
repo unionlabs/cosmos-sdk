@@ -43,13 +43,12 @@ func (k Keeper) DecrementNumberofValidatorsInJail(ctx context.Context) error {
 		return err
 	}
 
-	if n == 0 {
-		return types.ErrCannotDecreaseZero
+	if n < 0 {
+		n -= 1
+		return k.NumberOfValidatorsInJail.Set(ctx, n)
 	}
 
-	n -= 1
-
-	return k.NumberOfValidatorsInJail.Set(ctx, n)
+	return nil
 }
 
 func (k Keeper) ResetNumberofValidatorsInJail(ctx context.Context) error {
