@@ -1343,7 +1343,11 @@ func (app *BaseApp) CreateQueryContextWithCheckHeader(height int64, prove, check
 		if ok {
 			cInfo, err := rms.GetCommitInfo(height)
 			if cInfo != nil && err == nil {
-				ctx = ctx.WithHeaderInfo(coreheader.Info{Height: height, Time: cInfo.Timestamp})
+				ctx = ctx.WithHeaderInfo(coreheader.Info{
+					ChainID: app.chainID,
+					Height: height,
+					Time: cInfo.Timestamp,
+				})
 			}
 		}
 	}
