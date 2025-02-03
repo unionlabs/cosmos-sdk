@@ -165,7 +165,7 @@ require (
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
 
-replace (
-	github.com/cometbft/cometbft => github.com/unionlabs/cometbft d82e5fece3581cc6073a0e076439a8002d58fc06
-	github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
-)
+// replace (
+// 	github.com/cometbft/cometbft => github.com/unionlabs/cometbft d82e5fece3581cc6073a0e076439a8002d58fc06
+// 	github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
+// )
