@@ -82,7 +82,6 @@ func DefaultParams() Params {
 		sdk.DefaultBondDenom,
 		DefaultMinCommissionRate,
 		sdk.NewInt64Coin(sdk.DefaultBondDenom, 1000000), // fees used to rotate the ConsPubkey or Operator key
-		DefaultKeyRotationFee,
 		DefaultJailedValidorThreshold,
 		DefaultEpochLength,
 	)
