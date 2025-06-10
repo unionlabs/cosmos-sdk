@@ -154,6 +154,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates 
 	// The persistent set is updated later in this function.
 	// (see LastValidatorPowerKey).
 	last, err := k.getLastValidatorsByAddr(ctx)
+	lctx.Logger().Info("last: ", last)
 	if err != nil {
 		return nil, err
 	}
@@ -218,11 +219,14 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates 
 			return nil, err
 		}
 		oldPowerBytes, found := last[valAddrStr]
+		lctx.Logger().Info(fmt.Sprintf("Found: %s = %t", valAddrStr, found))
 		newPower := validator.ConsensusPower(powerReduction)
 		newPowerBytes := k.cdc.MustMarshal(&gogotypes.Int64Value{Value: newPower})
 
 		// update the validator set if power has changed
 		if !found || !bytes.Equal(oldPowerBytes, newPowerBytes) {
+			lctx.Logger().Info(fmt.Sprintf("Old power bytes: %b", oldPowerBytes))
+			lctx.Logger().Info(fmt.Sprintf("New power bytes: %b", newPowerBytes))
 			lctx.Logger().Info(fmt.Sprintf("Updating power to %d", newPower))
 			updates = append(updates, validator.ABCIValidatorUpdate(powerReduction))
 
