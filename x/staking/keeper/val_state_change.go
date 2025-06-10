@@ -140,6 +140,7 @@ func (k Keeper) BlockValidatorUpdates(ctx context.Context) ([]abci.ValidatorUpda
 // at the previous block height or were removed from the validator set entirely
 // are returned to CometBFT.
 func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates []abci.ValidatorUpdate, err error) {
+	lctx := ctx.(sdk.Context)
 	params, err := k.GetParams(ctx)
 	if err != nil {
 		return nil, err
@@ -159,44 +160,53 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates 
 
 	// Iterate over validators, highest power to lowest.
 	iterator, err := k.ValidatorsPowerStoreIterator(ctx)
+	lctx.Logger().Info("FETCHED ValidatorsPowerStoreIterator")
 	if err != nil {
 		return nil, err
 	}
 	defer iterator.Close()
+	lctx.Logger().Info(fmt.Sprintf("Updates before power change: %d", len(updates)))
 
 	count := 0
 	for ; iterator.Valid() && count < int(maxValidators); iterator.Next() {
 		// everything that is iterated in this loop is becoming or already a
 		// part of the bonded validator set
 		valAddr := sdk.ValAddress(iterator.Value())
+		lctx.Logger().Info(fmt.Sprintf("Iterating over validator: %s", valAddr.String()))
+		lctx.Logger().Info(valAddr.String())
 		validator := k.mustGetValidator(ctx, valAddr)
 
 		if validator.Jailed {
 			// do not panic here to enable POA https://github.com/strangelove-ventures/poa/blob/34aee49474018a4035fecbe676b765c2717d78aa/INTEGRATION.md#example-integration-of-the-poa-module
+			lctx.Logger().Info("Jailed validator found, skipping")
 			continue
 		}
 
 		// if we get to a zero-power validator (which we don't bond),
 		// there are no more possible bonded validators
 		if validator.PotentialConsensusPower(k.PowerReduction(ctx)) == 0 {
+			lctx.Logger().Info("Zero power validator found, breaking")
 			break
 		}
 
 		// apply the appropriate state change if necessary
 		switch {
 		case validator.IsUnbonded():
+			lctx.Logger().Info("Moving validator unbondedToBonded")
 			validator, err = k.unbondedToBonded(ctx, validator)
 			if err != nil {
 				return
 			}
 			amtFromNotBondedToBonded = amtFromNotBondedToBonded.Add(validator.GetTokens())
 		case validator.IsUnbonding():
+			lctx.Logger().Info("Moving validator unbondingToBonded")
 			validator, err = k.unbondingToBonded(ctx, validator)
 			if err != nil {
 				return
 			}
 			amtFromNotBondedToBonded = amtFromNotBondedToBonded.Add(validator.GetTokens())
 		case validator.IsBonded():
+			lctx.Logger().Info("no state change")
 			// no state change
 		default:
 			panic("unexpected validator status")
@@ -213,6 +223,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates 
 
 		// update the validator set if power has changed
 		if !found || !bytes.Equal(oldPowerBytes, newPowerBytes) {
+			lctx.Logger().Info(fmt.Sprintf("Updating power to %d", newPower))
 			updates = append(updates, validator.ABCIValidatorUpdate(powerReduction))
 
 			if err = k.SetLastValidatorPower(ctx, valAddr, newPower); err != nil {
@@ -222,9 +233,13 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates 
 
 		delete(last, valAddrStr)
 		count++
+		lctx.Logger().Info(fmt.Sprintf("Current count %d", count))
 
 		totalPower = totalPower.Add(math.NewInt(newPower))
+		lctx.Logger().Info(fmt.Sprintf("Total power: %d", totalPower))
 	}
+	lctx.Logger().Info("Iterator done")
+	lctx.Logger().Info(fmt.Sprintf("Updates after power change: %d", len(updates)))
 
 	// Update the size of the new epochs validator set
 	k.SetNumberOfValidatorsInEpoch(ctx, uint32(count))
@@ -238,6 +253,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates 
 
 	for _, valAddrBytes := range noLongerBonded {
 		validator := k.mustGetValidator(ctx, sdk.ValAddress(valAddrBytes))
+		lctx.Logger().Info(fmt.Sprintf("Zero power val: %s", validator.OperatorAddress))
 		validator, err = k.bondedToUnbonding(ctx, validator)
 		if err != nil {
 			return nil, err
@@ -253,6 +269,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates 
 
 		updates = append(updates, validator.ABCIValidatorUpdateZero())
 	}
+	lctx.Logger().Info(fmt.Sprintf("Updates after zero power: %d", len(updates)))
 
 	// Update the pools based on the recent updates in the validator set:
 	// - The tokens from the non-bonded candidates that enter the new validator set need to be transferred
@@ -275,6 +292,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates 
 
 	// set total power on lookup index if there are any updates
 	if len(updates) > 0 {
+		lctx.Logger().Info(fmt.Sprintf("Total updates: %d", len(updates)))
 		if err = k.SetLastTotalPower(ctx, totalPower); err != nil {
 			return nil, err
 		}
