@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"bytes"
 	"time"
 
 	abci "github.com/cometbft/cometbft/api/cometbft/abci/v1"
@@ -439,4 +440,48 @@ func (s *KeeperTestSuite) TestUnbondingValidator() {
 	validator, err = keeper.GetValidator(ctx, valAddr)
 	require.NoError(err)
 	require.Equal(stakingtypes.Unbonded, validator.Status)
+}
+
+func (s *KeeperTestSuite) Test_DeDuplicateValUpdates() {
+	require := s.Require()
+
+	var updates = []abci.ValidatorUpdate{
+		{
+			Power:       1000000,
+			PubKeyBytes: []byte("0xBYTEBYTE"),
+			PubKeyType:  "type",
+		},
+		{
+			Power:       1000000,
+			PubKeyBytes: []byte("0xCAFECODE"),
+			PubKeyType:  "type",
+		},
+		{
+			Power:       1000000,
+			PubKeyBytes: []byte("0xCAFECODE"),
+			PubKeyType:  "type",
+		},
+		{
+			Power:       1000000,
+			PubKeyBytes: []byte("0xCAFECODE"),
+			PubKeyType:  "type",
+		},
+		{
+			Power:       1000000,
+			PubKeyBytes: []byte("0xDEADCODE"),
+			PubKeyType:  "type",
+		},
+		{
+			Power:       1000000,
+			PubKeyBytes: []byte("0xCAFECODE"),
+			PubKeyType:  "type",
+		},
+	}
+
+	unique := stakingkeeper.DeDuplicateValUpdates(updates)
+
+	require.Equal(3, len(unique))
+	require.True(bytes.Equal(unique[0].PubKeyBytes, []byte("0xBYTEBYTE")))
+	require.True(bytes.Equal(unique[1].PubKeyBytes, []byte("0xCAFECODE")))
+	require.True(bytes.Equal(unique[2].PubKeyBytes, []byte("0xDEADCODE")))
 }
