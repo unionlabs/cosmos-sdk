@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"maps"
-	"slices"
 	"sort"
 
 	abci "github.com/cometbft/cometbft/api/cometbft/abci/v1"
@@ -165,7 +163,6 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates 
 		return nil, err
 	}
 	defer iterator.Close()
-	updatesMap := make(map[string]abci.ValidatorUpdate)
 
 	count := 0
 	for ; iterator.Valid() && count < int(maxValidators); iterator.Next() {
@@ -216,7 +213,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates 
 
 		// update the validator set if power has changed
 		if !found || !bytes.Equal(oldPowerBytes, newPowerBytes) {
-			updatesMap[valAddr.String()] = validator.ABCIValidatorUpdate(powerReduction)
+			updates = append(updates, validator.ABCIValidatorUpdate(powerReduction))
 
 			if err = k.SetLastValidatorPower(ctx, valAddr, newPower); err != nil {
 				return nil, err
@@ -254,7 +251,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates 
 			return nil, err
 		}
 
-		updatesMap[validator.OperatorAddress] = validator.ABCIValidatorUpdateZero()
+		updates = append(updates, validator.ABCIValidatorUpdateZero())
 	}
 
 	// Update the pools based on the recent updates in the validator set:
@@ -275,8 +272,6 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates 
 		}
 	default: // equal amounts of tokens; no update required
 	}
-
-	updates = slices.Collect(maps.Values(updatesMap))
 
 	// set total power on lookup index if there are any updates
 	if len(updates) > 0 {
