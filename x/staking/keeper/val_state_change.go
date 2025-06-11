@@ -273,6 +273,8 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates 
 	default: // equal amounts of tokens; no update required
 	}
 
+	updates = deDuplicateValUpdates(updates)
+
 	// set total power on lookup index if there are any updates
 	if len(updates) > 0 {
 		if err = k.SetLastTotalPower(ctx, totalPower); err != nil {
@@ -286,6 +288,22 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx context.Context) (updates 
 	}
 
 	return updates, err
+}
+
+func deDuplicateValUpdates(updates []abci.ValidatorUpdate) []abci.ValidatorUpdate {
+	var uniqueUpdates []abci.ValidatorUpdate
+
+	for _, update := range updates {
+		for i, uniqueUpdate := range uniqueUpdates {
+			if bytes.Equal(update.PubKeyBytes, uniqueUpdate.PubKeyBytes) {
+				uniqueUpdates[i] = update
+				continue
+			}
+		}
+		uniqueUpdates = append(uniqueUpdates, update)
+	}
+
+	return uniqueUpdates
 }
 
 // Validator state transitions
