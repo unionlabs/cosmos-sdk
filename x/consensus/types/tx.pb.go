@@ -6,7 +6,7 @@ package types
 import (
 	context "context"
 	fmt "fmt"
-	types "github.com/cometbft/cometbft/proto/tendermint/types"
+	v1 "github.com/cometbft/cometbft/api/cometbft/types/v1"
 	_ "github.com/cosmos/cosmos-proto"
 	_ "github.com/cosmos/cosmos-sdk/types/msgservice"
 	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
@@ -40,11 +40,11 @@ type MsgUpdateParams struct {
 	// separarately in x/upgrade.
 	//
 	// NOTE: All parameters must be supplied.
-	Block     *types.BlockParams     `protobuf:"bytes,2,opt,name=block,proto3" json:"block,omitempty"`
-	Evidence  *types.EvidenceParams  `protobuf:"bytes,3,opt,name=evidence,proto3" json:"evidence,omitempty"`
-	Validator *types.ValidatorParams `protobuf:"bytes,4,opt,name=validator,proto3" json:"validator,omitempty"`
+	Block     *v1.BlockParams     `protobuf:"bytes,2,opt,name=block,proto3" json:"block,omitempty"`
+	Evidence  *v1.EvidenceParams  `protobuf:"bytes,3,opt,name=evidence,proto3" json:"evidence,omitempty"`
+	Validator *v1.ValidatorParams `protobuf:"bytes,4,opt,name=validator,proto3" json:"validator,omitempty"`
 	// Since: cosmos-sdk 0.50
-	Abci *types.ABCIParams `protobuf:"bytes,5,opt,name=abci,proto3" json:"abci,omitempty"`
+	Abci *v1.ABCIParams `protobuf:"bytes,5,opt,name=abci,proto3" json:"abci,omitempty"`
 }
 
 func (m *MsgUpdateParams) Reset()         { *m = MsgUpdateParams{} }
@@ -87,28 +87,28 @@ func (m *MsgUpdateParams) GetAuthority() string {
 	return ""
 }
 
-func (m *MsgUpdateParams) GetBlock() *types.BlockParams {
+func (m *MsgUpdateParams) GetBlock() *v1.BlockParams {
 	if m != nil {
 		return m.Block
 	}
 	return nil
 }
 
-func (m *MsgUpdateParams) GetEvidence() *types.EvidenceParams {
+func (m *MsgUpdateParams) GetEvidence() *v1.EvidenceParams {
 	if m != nil {
 		return m.Evidence
 	}
 	return nil
 }
 
-func (m *MsgUpdateParams) GetValidator() *types.ValidatorParams {
+func (m *MsgUpdateParams) GetValidator() *v1.ValidatorParams {
 	if m != nil {
 		return m.Validator
 	}
 	return nil
 }
 
-func (m *MsgUpdateParams) GetAbci() *types.ABCIParams {
+func (m *MsgUpdateParams) GetAbci() *v1.ABCIParams {
 	if m != nil {
 		return m.Abci
 	}
@@ -266,6 +266,7 @@ func _Msg_UpdateParams_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+var Msg_serviceDesc = _Msg_serviceDesc
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "cosmos.consensus.v1.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -526,7 +527,7 @@ func (m *MsgUpdateParams) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Block == nil {
-				m.Block = &types.BlockParams{}
+				m.Block = &v1.BlockParams{}
 			}
 			if err := m.Block.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -562,7 +563,7 @@ func (m *MsgUpdateParams) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Evidence == nil {
-				m.Evidence = &types.EvidenceParams{}
+				m.Evidence = &v1.EvidenceParams{}
 			}
 			if err := m.Evidence.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -598,7 +599,7 @@ func (m *MsgUpdateParams) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Validator == nil {
-				m.Validator = &types.ValidatorParams{}
+				m.Validator = &v1.ValidatorParams{}
 			}
 			if err := m.Validator.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -634,7 +635,7 @@ func (m *MsgUpdateParams) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Abci == nil {
-				m.Abci = &types.ABCIParams{}
+				m.Abci = &v1.ABCIParams{}
 			}
 			if err := m.Abci.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err

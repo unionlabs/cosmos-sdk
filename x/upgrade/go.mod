@@ -9,7 +9,7 @@ require (
 	cosmossdk.io/errors v1.0.1
 	cosmossdk.io/log v1.4.1
 	cosmossdk.io/store v1.1.0
-	github.com/cometbft/cometbft v0.38.12
+	github.com/cometbft/cometbft v1.0.1
 	github.com/cosmos/cosmos-db v1.0.2
 	github.com/cosmos/cosmos-proto v1.0.0-beta.5
 	github.com/cosmos/cosmos-sdk v0.50.6
@@ -190,3 +190,11 @@ require (
 // Fix upstream GHSA-h395-qcrw-5vmq and GHSA-3vp4-m3rf-835h vulnerabilities.
 // TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 replace github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.9.1
+
+replace (
+	cosmossdk.io/store => ../../store
+	github.com/cometbft/cometbft => github.com/unionlabs/cometbls v0.0.0-20250228223008-5aa5a57b377d
+	github.com/cometbft/cometbft/api => github.com/unionlabs/cometbls/api v0.0.0-20250228223008-5aa5a57b377d
+	github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
+	github.com/tunabay/go-bitarray => github.com/poisonphang/go-bitarray v0.0.0-20240912214703-d6127bb4d1bd
+)

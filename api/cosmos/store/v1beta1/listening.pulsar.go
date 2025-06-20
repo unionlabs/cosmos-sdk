@@ -806,11 +806,11 @@ func (x *fastReflection_BlockMetadata) Get(descriptor protoreflect.FieldDescript
 func (x *fastReflection_BlockMetadata) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
 	case "cosmos.store.v1beta1.BlockMetadata.response_commit":
-		x.ResponseCommit = value.Message().Interface().(*abci.ResponseCommit)
+		x.ResponseCommit = value.Message().Interface().(*abci.CommitResponse)
 	case "cosmos.store.v1beta1.BlockMetadata.request_finalize_block":
-		x.RequestFinalizeBlock = value.Message().Interface().(*abci.RequestFinalizeBlock)
+		x.RequestFinalizeBlock = value.Message().Interface().(*abci.FinalizeBlockRequest)
 	case "cosmos.store.v1beta1.BlockMetadata.response_finalize_block":
-		x.ResponseFinalizeBlock = value.Message().Interface().(*abci.ResponseFinalizeBlock)
+		x.ResponseFinalizeBlock = value.Message().Interface().(*abci.FinalizeBlockResponse)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: cosmos.store.v1beta1.BlockMetadata"))
@@ -833,17 +833,17 @@ func (x *fastReflection_BlockMetadata) Mutable(fd protoreflect.FieldDescriptor) 
 	switch fd.FullName() {
 	case "cosmos.store.v1beta1.BlockMetadata.response_commit":
 		if x.ResponseCommit == nil {
-			x.ResponseCommit = new(abci.ResponseCommit)
+			x.ResponseCommit = new(abci.CommitResponse)
 		}
 		return protoreflect.ValueOfMessage(x.ResponseCommit.ProtoReflect())
 	case "cosmos.store.v1beta1.BlockMetadata.request_finalize_block":
 		if x.RequestFinalizeBlock == nil {
-			x.RequestFinalizeBlock = new(abci.RequestFinalizeBlock)
+			x.RequestFinalizeBlock = new(abci.FinalizeBlockRequest)
 		}
 		return protoreflect.ValueOfMessage(x.RequestFinalizeBlock.ProtoReflect())
 	case "cosmos.store.v1beta1.BlockMetadata.response_finalize_block":
 		if x.ResponseFinalizeBlock == nil {
-			x.ResponseFinalizeBlock = new(abci.ResponseFinalizeBlock)
+			x.ResponseFinalizeBlock = new(abci.FinalizeBlockResponse)
 		}
 		return protoreflect.ValueOfMessage(x.ResponseFinalizeBlock.ProtoReflect())
 	default:
@@ -860,13 +860,13 @@ func (x *fastReflection_BlockMetadata) Mutable(fd protoreflect.FieldDescriptor) 
 func (x *fastReflection_BlockMetadata) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
 	case "cosmos.store.v1beta1.BlockMetadata.response_commit":
-		m := new(abci.ResponseCommit)
+		m := new(abci.CommitResponse)
 		return protoreflect.ValueOfMessage(m.ProtoReflect())
 	case "cosmos.store.v1beta1.BlockMetadata.request_finalize_block":
-		m := new(abci.RequestFinalizeBlock)
+		m := new(abci.FinalizeBlockRequest)
 		return protoreflect.ValueOfMessage(m.ProtoReflect())
 	case "cosmos.store.v1beta1.BlockMetadata.response_finalize_block":
-		m := new(abci.ResponseFinalizeBlock)
+		m := new(abci.FinalizeBlockResponse)
 		return protoreflect.ValueOfMessage(m.ProtoReflect())
 	default:
 		if fd.IsExtension() {
@@ -1099,7 +1099,7 @@ func (x *fastReflection_BlockMetadata) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
 				if x.ResponseCommit == nil {
-					x.ResponseCommit = &abci.ResponseCommit{}
+					x.ResponseCommit = &abci.CommitResponse{}
 				}
 				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.ResponseCommit); err != nil {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
@@ -1135,7 +1135,7 @@ func (x *fastReflection_BlockMetadata) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
 				if x.RequestFinalizeBlock == nil {
-					x.RequestFinalizeBlock = &abci.RequestFinalizeBlock{}
+					x.RequestFinalizeBlock = &abci.FinalizeBlockRequest{}
 				}
 				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.RequestFinalizeBlock); err != nil {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
@@ -1171,7 +1171,7 @@ func (x *fastReflection_BlockMetadata) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
 				if x.ResponseFinalizeBlock == nil {
-					x.ResponseFinalizeBlock = &abci.ResponseFinalizeBlock{}
+					x.ResponseFinalizeBlock = &abci.FinalizeBlockResponse{}
 				}
 				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.ResponseFinalizeBlock); err != nil {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
@@ -1296,9 +1296,9 @@ type BlockMetadata struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ResponseCommit        *abci.ResponseCommit        `protobuf:"bytes,6,opt,name=response_commit,json=responseCommit,proto3" json:"response_commit,omitempty"`
-	RequestFinalizeBlock  *abci.RequestFinalizeBlock  `protobuf:"bytes,7,opt,name=request_finalize_block,json=requestFinalizeBlock,proto3" json:"request_finalize_block,omitempty"`
-	ResponseFinalizeBlock *abci.ResponseFinalizeBlock `protobuf:"bytes,8,opt,name=response_finalize_block,json=responseFinalizeBlock,proto3" json:"response_finalize_block,omitempty"` // TODO: should we renumber this?
+	ResponseCommit        *abci.CommitResponse        `protobuf:"bytes,6,opt,name=response_commit,json=responseCommit,proto3" json:"response_commit,omitempty"`
+	RequestFinalizeBlock  *abci.FinalizeBlockRequest  `protobuf:"bytes,7,opt,name=request_finalize_block,json=requestFinalizeBlock,proto3" json:"request_finalize_block,omitempty"`
+	ResponseFinalizeBlock *abci.FinalizeBlockResponse `protobuf:"bytes,8,opt,name=response_finalize_block,json=responseFinalizeBlock,proto3" json:"response_finalize_block,omitempty"` // TODO: should we renumber this?
 }
 
 func (x *BlockMetadata) Reset() {
@@ -1321,21 +1321,21 @@ func (*BlockMetadata) Descriptor() ([]byte, []int) {
 	return file_cosmos_store_v1beta1_listening_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *BlockMetadata) GetResponseCommit() *abci.ResponseCommit {
+func (x *BlockMetadata) GetResponseCommit() *abci.CommitResponse {
 	if x != nil {
 		return x.ResponseCommit
 	}
 	return nil
 }
 
-func (x *BlockMetadata) GetRequestFinalizeBlock() *abci.RequestFinalizeBlock {
+func (x *BlockMetadata) GetRequestFinalizeBlock() *abci.FinalizeBlockRequest {
 	if x != nil {
 		return x.RequestFinalizeBlock
 	}
 	return nil
 }
 
-func (x *BlockMetadata) GetResponseFinalizeBlock() *abci.ResponseFinalizeBlock {
+func (x *BlockMetadata) GetResponseFinalizeBlock() *abci.FinalizeBlockResponse {
 	if x != nil {
 		return x.ResponseFinalizeBlock
 	}
@@ -1409,14 +1409,14 @@ var file_cosmos_store_v1beta1_listening_proto_msgTypes = make([]protoimpl.Messag
 var file_cosmos_store_v1beta1_listening_proto_goTypes = []interface{}{
 	(*StoreKVPair)(nil),                // 0: cosmos.store.v1beta1.StoreKVPair
 	(*BlockMetadata)(nil),              // 1: cosmos.store.v1beta1.BlockMetadata
-	(*abci.ResponseCommit)(nil),        // 2: tendermint.abci.ResponseCommit
-	(*abci.RequestFinalizeBlock)(nil),  // 3: tendermint.abci.RequestFinalizeBlock
-	(*abci.ResponseFinalizeBlock)(nil), // 4: tendermint.abci.ResponseFinalizeBlock
+	(*abci.CommitResponse)(nil),        // 2: tendermint.abci.CommitResponse
+	(*abci.FinalizeBlockRequest)(nil),  // 3: tendermint.abci.FinalizeBlockRequest
+	(*abci.FinalizeBlockResponse)(nil), // 4: tendermint.abci.FinalizeBlockResponse
 }
 var file_cosmos_store_v1beta1_listening_proto_depIdxs = []int32{
-	2, // 0: cosmos.store.v1beta1.BlockMetadata.response_commit:type_name -> tendermint.abci.ResponseCommit
-	3, // 1: cosmos.store.v1beta1.BlockMetadata.request_finalize_block:type_name -> tendermint.abci.RequestFinalizeBlock
-	4, // 2: cosmos.store.v1beta1.BlockMetadata.response_finalize_block:type_name -> tendermint.abci.ResponseFinalizeBlock
+	2, // 0: cosmos.store.v1beta1.BlockMetadata.response_commit:type_name -> tendermint.abci.CommitResponse
+	3, // 1: cosmos.store.v1beta1.BlockMetadata.request_finalize_block:type_name -> tendermint.abci.FinalizeBlockRequest
+	4, // 2: cosmos.store.v1beta1.BlockMetadata.response_finalize_block:type_name -> tendermint.abci.FinalizeBlockResponse
 	3, // [3:3] is the sub-list for method output_type
 	3, // [3:3] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name

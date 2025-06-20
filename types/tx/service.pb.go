@@ -6,7 +6,7 @@ package tx
 import (
 	context "context"
 	fmt "fmt"
-	types1 "github.com/cometbft/cometbft/proto/tendermint/types"
+	v1 "github.com/cometbft/cometbft/api/cometbft/types/v1"
 	types "github.com/cosmos/cosmos-sdk/types"
 	query "github.com/cosmos/cosmos-sdk/types/query"
 	grpc1 "github.com/cosmos/gogoproto/grpc"
@@ -665,9 +665,9 @@ func (m *GetBlockWithTxsRequest) GetPagination() *query.PageRequest {
 // Since: cosmos-sdk 0.45.2
 type GetBlockWithTxsResponse struct {
 	// txs are the transactions in the block.
-	Txs     []*Tx           `protobuf:"bytes,1,rep,name=txs,proto3" json:"txs,omitempty"`
-	BlockId *types1.BlockID `protobuf:"bytes,2,opt,name=block_id,json=blockId,proto3" json:"block_id,omitempty"`
-	Block   *types1.Block   `protobuf:"bytes,3,opt,name=block,proto3" json:"block,omitempty"`
+	Txs     []*Tx       `protobuf:"bytes,1,rep,name=txs,proto3" json:"txs,omitempty"`
+	BlockId *v1.BlockID `protobuf:"bytes,2,opt,name=block_id,json=blockId,proto3" json:"block_id,omitempty"`
+	Block   *v1.Block   `protobuf:"bytes,3,opt,name=block,proto3" json:"block,omitempty"`
 	// pagination defines a pagination for the response.
 	Pagination *query.PageResponse `protobuf:"bytes,4,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
@@ -712,14 +712,14 @@ func (m *GetBlockWithTxsResponse) GetTxs() []*Tx {
 	return nil
 }
 
-func (m *GetBlockWithTxsResponse) GetBlockId() *types1.BlockID {
+func (m *GetBlockWithTxsResponse) GetBlockId() *v1.BlockID {
 	if m != nil {
 		return m.BlockId
 	}
 	return nil
 }
 
-func (m *GetBlockWithTxsResponse) GetBlock() *types1.Block {
+func (m *GetBlockWithTxsResponse) GetBlock() *v1.Block {
 	if m != nil {
 		return m.Block
 	}
@@ -1589,6 +1589,7 @@ func _Service_TxDecodeAmino_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+var Service_serviceDesc = _Service_serviceDesc
 var _Service_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "cosmos.tx.v1beta1.Service",
 	HandlerType: (*ServiceServer)(nil),
@@ -3897,7 +3898,7 @@ func (m *GetBlockWithTxsResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.BlockId == nil {
-				m.BlockId = &types1.BlockID{}
+				m.BlockId = &v1.BlockID{}
 			}
 			if err := m.BlockId.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -3933,7 +3934,7 @@ func (m *GetBlockWithTxsResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Block == nil {
-				m.Block = &types1.Block{}
+				m.Block = &v1.Block{}
 			}
 			if err := m.Block.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err

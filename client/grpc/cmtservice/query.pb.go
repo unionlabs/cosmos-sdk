@@ -6,8 +6,8 @@ package cmtservice
 import (
 	context "context"
 	fmt "fmt"
-	p2p "github.com/cometbft/cometbft/proto/tendermint/p2p"
-	types1 "github.com/cometbft/cometbft/proto/tendermint/types"
+	v1 "github.com/cometbft/cometbft/api/cometbft/types/v1"
+	p2p "github.com/cometbft/cometbft/api/cometbft/p2p/v1"
 	_ "github.com/cosmos/cosmos-proto"
 	types "github.com/cosmos/cosmos-sdk/codec/types"
 	query "github.com/cosmos/cosmos-sdk/types/query"
@@ -375,9 +375,9 @@ func (m *GetBlockByHeightRequest) GetHeight() int64 {
 
 // GetBlockByHeightResponse is the response type for the Query/GetBlockByHeight RPC method.
 type GetBlockByHeightResponse struct {
-	BlockId *types1.BlockID `protobuf:"bytes,1,opt,name=block_id,json=blockId,proto3" json:"block_id,omitempty"`
+	BlockId *v1.BlockID `protobuf:"bytes,1,opt,name=block_id,json=blockId,proto3" json:"block_id,omitempty"`
 	// Deprecated: please use `sdk_block` instead
-	Block *types1.Block `protobuf:"bytes,2,opt,name=block,proto3" json:"block,omitempty"`
+	Block *v1.Block `protobuf:"bytes,2,opt,name=block,proto3" json:"block,omitempty"`
 	// Since: cosmos-sdk 0.47
 	SdkBlock *Block `protobuf:"bytes,3,opt,name=sdk_block,json=sdkBlock,proto3" json:"sdk_block,omitempty"`
 }
@@ -415,14 +415,14 @@ func (m *GetBlockByHeightResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetBlockByHeightResponse proto.InternalMessageInfo
 
-func (m *GetBlockByHeightResponse) GetBlockId() *types1.BlockID {
+func (m *GetBlockByHeightResponse) GetBlockId() *v1.BlockID {
 	if m != nil {
 		return m.BlockId
 	}
 	return nil
 }
 
-func (m *GetBlockByHeightResponse) GetBlock() *types1.Block {
+func (m *GetBlockByHeightResponse) GetBlock() *v1.Block {
 	if m != nil {
 		return m.Block
 	}
@@ -475,9 +475,9 @@ var xxx_messageInfo_GetLatestBlockRequest proto.InternalMessageInfo
 
 // GetLatestBlockResponse is the response type for the Query/GetLatestBlock RPC method.
 type GetLatestBlockResponse struct {
-	BlockId *types1.BlockID `protobuf:"bytes,1,opt,name=block_id,json=blockId,proto3" json:"block_id,omitempty"`
+	BlockId *v1.BlockID `protobuf:"bytes,1,opt,name=block_id,json=blockId,proto3" json:"block_id,omitempty"`
 	// Deprecated: please use `sdk_block` instead
-	Block *types1.Block `protobuf:"bytes,2,opt,name=block,proto3" json:"block,omitempty"`
+	Block *v1.Block `protobuf:"bytes,2,opt,name=block,proto3" json:"block,omitempty"`
 	// Since: cosmos-sdk 0.47
 	SdkBlock *Block `protobuf:"bytes,3,opt,name=sdk_block,json=sdkBlock,proto3" json:"sdk_block,omitempty"`
 }
@@ -515,14 +515,14 @@ func (m *GetLatestBlockResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetLatestBlockResponse proto.InternalMessageInfo
 
-func (m *GetLatestBlockResponse) GetBlockId() *types1.BlockID {
+func (m *GetLatestBlockResponse) GetBlockId() *v1.BlockID {
 	if m != nil {
 		return m.BlockId
 	}
 	return nil
 }
 
-func (m *GetLatestBlockResponse) GetBlock() *types1.Block {
+func (m *GetLatestBlockResponse) GetBlock() *v1.Block {
 	if m != nil {
 		return m.Block
 	}
@@ -1566,6 +1566,7 @@ func _Service_ABCIQuery_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+var Service_serviceDesc = _Service_serviceDesc
 var _Service_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "cosmos.base.tendermint.v1beta1.Service",
 	HandlerType: (*ServiceServer)(nil),
@@ -3622,7 +3623,7 @@ func (m *GetBlockByHeightResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.BlockId == nil {
-				m.BlockId = &types1.BlockID{}
+				m.BlockId = &v1.BlockID{}
 			}
 			if err := m.BlockId.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -3658,7 +3659,7 @@ func (m *GetBlockByHeightResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Block == nil {
-				m.Block = &types1.Block{}
+				m.Block = &v1.Block{}
 			}
 			if err := m.Block.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -3830,7 +3831,7 @@ func (m *GetLatestBlockResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.BlockId == nil {
-				m.BlockId = &types1.BlockID{}
+				m.BlockId = &v1.BlockID{}
 			}
 			if err := m.BlockId.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -3866,7 +3867,7 @@ func (m *GetLatestBlockResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Block == nil {
-				m.Block = &types1.Block{}
+				m.Block = &v1.Block{}
 			}
 			if err := m.Block.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err

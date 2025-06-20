@@ -10,7 +10,7 @@ require (
 	cosmossdk.io/errors v1.0.1
 	cosmossdk.io/store v1.1.0
 	github.com/cockroachdb/errors v1.11.3
-	github.com/cometbft/cometbft v0.38.12
+	github.com/cometbft/cometbft v1.0.1
 	github.com/cosmos/cosmos-sdk v0.50.6
 	github.com/cosmos/gogoproto v1.7.0
 	github.com/golang/protobuf v1.5.4
@@ -154,4 +154,12 @@ require (
 	nhooyr.io/websocket v1.8.6 // indirect
 	pgregory.net/rapid v1.1.0 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
+)
+
+replace (
+	cosmossdk.io/store => ../../store
+	github.com/cometbft/cometbft => github.com/unionlabs/cometbls v0.0.0-20250228223008-5aa5a57b377d
+	github.com/cometbft/cometbft/api => github.com/unionlabs/cometbls/api v0.0.0-20250228223008-5aa5a57b377d
+	github.com/consensys/gnark-crypto => github.com/unionlabs/gnark-crypto v0.0.0-20231016072529-15c0507b6578
+	github.com/tunabay/go-bitarray => github.com/poisonphang/go-bitarray v0.0.0-20240912214703-d6127bb4d1bd
 )

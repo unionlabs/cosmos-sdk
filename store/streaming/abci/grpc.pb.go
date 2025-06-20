@@ -31,8 +31,8 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // ListenEndBlockRequest is the request type for the ListenEndBlock RPC method
 type ListenFinalizeBlockRequest struct {
-	Req *types.RequestFinalizeBlock  `protobuf:"bytes,1,opt,name=req,proto3" json:"req,omitempty"`
-	Res *types.ResponseFinalizeBlock `protobuf:"bytes,2,opt,name=res,proto3" json:"res,omitempty"`
+	Req *types.FinalizeBlockRequest  `protobuf:"bytes,1,opt,name=req,proto3" json:"req,omitempty"`
+	Res *types.FinalizeBlockResponse `protobuf:"bytes,2,opt,name=res,proto3" json:"res,omitempty"`
 }
 
 func (m *ListenFinalizeBlockRequest) Reset()         { *m = ListenFinalizeBlockRequest{} }
@@ -68,14 +68,14 @@ func (m *ListenFinalizeBlockRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ListenFinalizeBlockRequest proto.InternalMessageInfo
 
-func (m *ListenFinalizeBlockRequest) GetReq() *types.RequestFinalizeBlock {
+func (m *ListenFinalizeBlockRequest) GetReq() *types.FinalizeBlockRequest {
 	if m != nil {
 		return m.Req
 	}
 	return nil
 }
 
-func (m *ListenFinalizeBlockRequest) GetRes() *types.ResponseFinalizeBlock {
+func (m *ListenFinalizeBlockRequest) GetRes() *types.FinalizeBlockResponse {
 	if m != nil {
 		return m.Res
 	}
@@ -123,7 +123,7 @@ var xxx_messageInfo_ListenFinalizeBlockResponse proto.InternalMessageInfo
 type ListenCommitRequest struct {
 	// explicitly pass in block height as ResponseCommit does not contain this info
 	BlockHeight int64                 `protobuf:"varint,1,opt,name=block_height,json=blockHeight,proto3" json:"block_height,omitempty"`
-	Res         *types.ResponseCommit `protobuf:"bytes,2,opt,name=res,proto3" json:"res,omitempty"`
+	Res         *types.CommitResponse `protobuf:"bytes,2,opt,name=res,proto3" json:"res,omitempty"`
 	ChangeSet   []*types1.StoreKVPair `protobuf:"bytes,3,rep,name=change_set,json=changeSet,proto3" json:"change_set,omitempty"`
 }
 
@@ -167,7 +167,7 @@ func (m *ListenCommitRequest) GetBlockHeight() int64 {
 	return 0
 }
 
-func (m *ListenCommitRequest) GetRes() *types.ResponseCommit {
+func (m *ListenCommitRequest) GetRes() *types.CommitResponse {
 	if m != nil {
 		return m.Res
 	}
@@ -362,6 +362,7 @@ func _ABCIListenerService_ListenCommit_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+var ABCIListenerService_serviceDesc = _ABCIListenerService_serviceDesc
 var _ABCIListenerService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "cosmos.store.streaming.abci.ABCIListenerService",
 	HandlerType: (*ABCIListenerServiceServer)(nil),
@@ -659,7 +660,7 @@ func (m *ListenFinalizeBlockRequest) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Req == nil {
-				m.Req = &types.RequestFinalizeBlock{}
+				m.Req = &types.FinalizeBlockRequest{}
 			}
 			if err := m.Req.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -695,7 +696,7 @@ func (m *ListenFinalizeBlockRequest) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Res == nil {
-				m.Res = &types.ResponseFinalizeBlock{}
+				m.Res = &types.FinalizeBlockResponse{}
 			}
 			if err := m.Res.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -850,7 +851,7 @@ func (m *ListenCommitRequest) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Res == nil {
-				m.Res = &types.ResponseCommit{}
+				m.Res = &types.CommitResponse{}
 			}
 			if err := m.Res.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err

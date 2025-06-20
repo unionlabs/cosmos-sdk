@@ -6,7 +6,7 @@ package types
 import (
 	context "context"
 	fmt "fmt"
-	types "github.com/cometbft/cometbft/proto/tendermint/types"
+	v1 "github.com/cometbft/cometbft/api/cometbft/types/v1"
 	grpc1 "github.com/cosmos/gogoproto/grpc"
 	proto "github.com/cosmos/gogoproto/proto"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -71,7 +71,7 @@ type QueryParamsResponse struct {
 	// params are the tendermint consensus params stored in the consensus module.
 	// Please note that `params.version` is not populated in this response, it is
 	// tracked separately in the x/upgrade module.
-	Params *types.ConsensusParams `protobuf:"bytes,1,opt,name=params,proto3" json:"params,omitempty"`
+	Params *v1.ConsensusParams `protobuf:"bytes,1,opt,name=params,proto3" json:"params,omitempty"`
 }
 
 func (m *QueryParamsResponse) Reset()         { *m = QueryParamsResponse{} }
@@ -107,7 +107,7 @@ func (m *QueryParamsResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryParamsResponse proto.InternalMessageInfo
 
-func (m *QueryParamsResponse) GetParams() *types.ConsensusParams {
+func (m *QueryParamsResponse) GetParams() *v1.ConsensusParams {
 	if m != nil {
 		return m.Params
 	}
@@ -212,6 +212,7 @@ func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+var Query_serviceDesc = _Query_serviceDesc
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "cosmos.consensus.v1.Query",
 	HandlerType: (*QueryServer)(nil),
@@ -431,7 +432,7 @@ func (m *QueryParamsResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Params == nil {
-				m.Params = &types.ConsensusParams{}
+				m.Params = &v1.ConsensusParams{}
 			}
 			if err := m.Params.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err

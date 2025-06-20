@@ -5,8 +5,8 @@ package cmtservice
 
 import (
 	fmt "fmt"
-	types "github.com/cometbft/cometbft/proto/tendermint/types"
-	version "github.com/cometbft/cometbft/proto/tendermint/version"
+	v1 "github.com/cometbft/cometbft/api/cometbft/types/v1"
+	version "github.com/cometbft/cometbft/api/cometbft/version/v1"
 	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
@@ -33,10 +33,10 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // Block is tendermint type Block, with the Header proposer address
 // field converted to bech32 string.
 type Block struct {
-	Header     Header             `protobuf:"bytes,1,opt,name=header,proto3" json:"header"`
-	Data       types.Data         `protobuf:"bytes,2,opt,name=data,proto3" json:"data"`
-	Evidence   types.EvidenceList `protobuf:"bytes,3,opt,name=evidence,proto3" json:"evidence"`
-	LastCommit *types.Commit      `protobuf:"bytes,4,opt,name=last_commit,json=lastCommit,proto3" json:"last_commit,omitempty"`
+	Header     Header          `protobuf:"bytes,1,opt,name=header,proto3" json:"header"`
+	Data       v1.Data         `protobuf:"bytes,2,opt,name=data,proto3" json:"data"`
+	Evidence   v1.EvidenceList `protobuf:"bytes,3,opt,name=evidence,proto3" json:"evidence"`
+	LastCommit *v1.Commit      `protobuf:"bytes,4,opt,name=last_commit,json=lastCommit,proto3" json:"last_commit,omitempty"`
 }
 
 func (m *Block) Reset()         { *m = Block{} }
@@ -79,21 +79,21 @@ func (m *Block) GetHeader() Header {
 	return Header{}
 }
 
-func (m *Block) GetData() types.Data {
+func (m *Block) GetData() v1.Data {
 	if m != nil {
 		return m.Data
 	}
-	return types.Data{}
+	return v1.Data{}
 }
 
-func (m *Block) GetEvidence() types.EvidenceList {
+func (m *Block) GetEvidence() v1.EvidenceList {
 	if m != nil {
 		return m.Evidence
 	}
-	return types.EvidenceList{}
+	return v1.EvidenceList{}
 }
 
-func (m *Block) GetLastCommit() *types.Commit {
+func (m *Block) GetLastCommit() *v1.Commit {
 	if m != nil {
 		return m.LastCommit
 	}
@@ -108,7 +108,7 @@ type Header struct {
 	Height  int64             `protobuf:"varint,3,opt,name=height,proto3" json:"height,omitempty"`
 	Time    time.Time         `protobuf:"bytes,4,opt,name=time,proto3,stdtime" json:"time"`
 	// prev block info
-	LastBlockId types.BlockID `protobuf:"bytes,5,opt,name=last_block_id,json=lastBlockId,proto3" json:"last_block_id"`
+	LastBlockId v1.BlockID `protobuf:"bytes,5,opt,name=last_block_id,json=lastBlockId,proto3" json:"last_block_id"`
 	// hashes of block data
 	LastCommitHash []byte `protobuf:"bytes,6,opt,name=last_commit_hash,json=lastCommitHash,proto3" json:"last_commit_hash,omitempty"`
 	DataHash       []byte `protobuf:"bytes,7,opt,name=data_hash,json=dataHash,proto3" json:"data_hash,omitempty"`
@@ -187,11 +187,11 @@ func (m *Header) GetTime() time.Time {
 	return time.Time{}
 }
 
-func (m *Header) GetLastBlockId() types.BlockID {
+func (m *Header) GetLastBlockId() v1.BlockID {
 	if m != nil {
 		return m.LastBlockId
 	}
-	return types.BlockID{}
+	return v1.BlockID{}
 }
 
 func (m *Header) GetLastCommitHash() []byte {
@@ -754,7 +754,7 @@ func (m *Block) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.LastCommit == nil {
-				m.LastCommit = &types.Commit{}
+				m.LastCommit = &v1.Commit{}
 			}
 			if err := m.LastCommit.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err

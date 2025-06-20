@@ -6,7 +6,7 @@ package types
 import (
 	fmt "fmt"
 	types1 "github.com/cometbft/cometbft/abci/types"
-	types2 "github.com/cometbft/cometbft/proto/tendermint/types"
+	v1 "github.com/cometbft/cometbft/api/cometbft/types/v1"
 	types "github.com/cosmos/cosmos-sdk/codec/types"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
@@ -633,7 +633,7 @@ type SearchBlocksResult struct {
 	// Max count blocks per page
 	Limit int64 `protobuf:"varint,5,opt,name=limit,proto3" json:"limit,omitempty"`
 	// List of blocks in current page
-	Blocks []*types2.Block `protobuf:"bytes,6,rep,name=blocks,proto3" json:"blocks,omitempty"`
+	Blocks []*v1.Block `protobuf:"bytes,6,rep,name=blocks,proto3" json:"blocks,omitempty"`
 }
 
 func (m *SearchBlocksResult) Reset()      { *m = SearchBlocksResult{} }
@@ -703,7 +703,7 @@ func (m *SearchBlocksResult) GetLimit() int64 {
 	return 0
 }
 
-func (m *SearchBlocksResult) GetBlocks() []*types2.Block {
+func (m *SearchBlocksResult) GetBlocks() []*v1.Block {
 	if m != nil {
 		return m.Blocks
 	}
@@ -1787,7 +1787,7 @@ func (this *SearchBlocksResult) String() string {
 	}
 	repeatedStringForBlocks := "[]*Block{"
 	for _, f := range this.Blocks {
-		repeatedStringForBlocks += strings.Replace(fmt.Sprintf("%v", f), "Block", "types2.Block", 1) + ","
+		repeatedStringForBlocks += strings.Replace(fmt.Sprintf("%v", f), "Block", "v1.Block", 1) + ","
 	}
 	repeatedStringForBlocks += "}"
 	s := strings.Join([]string{`&SearchBlocksResult{`,
@@ -3553,7 +3553,7 @@ func (m *SearchBlocksResult) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Blocks = append(m.Blocks, &types2.Block{})
+			m.Blocks = append(m.Blocks, &v1.Block{})
 			if err := m.Blocks[len(m.Blocks)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
